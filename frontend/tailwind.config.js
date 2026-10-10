@@ -2,7 +2,7 @@
 export default {
   content: [
     "./index.html",
-    "./src//*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}", //  El  ** en la ruta asegura que se escaneen todas las subcarpetas actuales y futuras
   ],
   theme: {
     extend: {
