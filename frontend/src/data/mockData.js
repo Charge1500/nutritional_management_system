@@ -111,6 +111,15 @@ export const coberturaDietaGrupo = [
   { id_dieta: 1, id_grupo: 1 }, { id_dieta: 1, id_grupo: 2 }, { id_dieta: 1, id_grupo: 3 }, { id_dieta: 1, id_grupo: 4 },
   { id_dieta: 2, id_grupo: 2 }, { id_dieta: 2, id_grupo: 3 },
   { id_dieta: 3, id_grupo: 1 }, { id_dieta: 3, id_grupo: 3 }, { id_dieta: 3, id_grupo: 4 },
+
+];
+
+// ==================== RELACIÓN NUTRICIONISTA–DIETA ====================
+
+export const atiende = [
+  { id_usuario: 1, id_dieta: 1 },
+  { id_usuario: 1, id_dieta: 2 },
+  { id_usuario: 2, id_dieta: 2 },
 ];
 
 // ==================== R12: CONTENIDO MENÚ–ALIMENTO ====================
@@ -154,6 +163,7 @@ export const mockData = {
   usuarios,
   solicitudes,
   dietas,
+  atiende,
   gruposNutricionales,
   menus,
   alimentos,
