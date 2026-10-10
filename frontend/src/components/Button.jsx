@@ -1,21 +1,21 @@
 export const Button = ({
   children,
   onClick,
-  type = "button",
-  variant = "primary",
+  type = 'button',
+  variant = 'health',
   className = "",
   disabled = false,
+  ...props
 }) => {
+  const baseStyles = "inline-flex justify-center items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+
   // Definimos los estilos visuales disponibles para el botón.
+  // Usa los colores específicos definidos en la config de Tailwind 
   const variants = {
-    primary:
-      "bg-health-500 text-white hover:bg-health-600",
-
-    secondary:
-      "border border-gray-300 text-content hover:bg-gray-50",
-
-    danger:
-      "text-red-500 hover:text-red-700",
+    health: "bg-health-600 text-white hover:bg-health-700 focus:ring-health-500 shadow-sm",
+    food: "bg-food-600 text-white hover:bg-food-700 focus:ring-food-500 shadow-sm",
+    outline: "bg-surface border border-gray-300 text-content hover:bg-gray-50 focus:ring-health-500",
+    ghost: "bg-transparent text-content-muted hover:text-content hover:bg-gray-100 focus:ring-gray-500"
   };
 
   return (
@@ -24,12 +24,13 @@ export const Button = ({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors
-        ${variants[variant] || variants.primary}
-        ${disabled ? "cursor-not-allowed opacity-50" : ""}
+      className={`
+        ${baseStyles} 
+        ${variants[variant] || variants.health}
+        ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
         ${className}`}
+        {...props}
     >
-      {/* Mostramos el contenido que se pase al componente. */}
       {children}
     </button>
   );
