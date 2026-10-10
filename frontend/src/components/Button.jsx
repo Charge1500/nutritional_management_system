@@ -1,19 +1,36 @@
-export const Navbar = ({ userName, role }) => {
+export const Button = ({
+  children,
+  onClick,
+  type = "button",
+  variant = "primary",
+  className = "",
+  disabled = false,
+}) => {
+  // Definimos los estilos visuales disponibles para el botón.
+  const variants = {
+    primary:
+      "bg-health-500 text-white hover:bg-health-600",
+
+    secondary:
+      "border border-gray-300 text-content hover:bg-gray-50",
+
+    danger:
+      "text-red-500 hover:text-red-700",
+  };
+
   return (
-    <nav className="bg-surface border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40">
-      <div className="flex items-center space-x-2">
-        <div className="h-8 w-8 bg-health-500 rounded-lg"></div>
-        <span className="text-xl font-bold text-content">MediCare</span>
-      </div>
-      <div className="flex items-center space-x-4">
-        <div className="text-sm text-right">
-          <p className="font-medium text-content">{userName || "Usuario"}</p>
-          <p className="text-content-muted capitalize">{role || "Rol"}</p>
-        </div>
-        <button className="text-sm font-medium text-red-500 hover:text-red-700">
-          Cerrar sesión
-        </button>
-      </div>
-    </nav>
+    // Renderizamos el botón con sus propiedades y estilos.
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors
+        ${variants[variant] || variants.primary}
+        ${disabled ? "cursor-not-allowed opacity-50" : ""}
+        ${className}`}
+    >
+      {/* Mostramos el contenido que se pase al componente. */}
+      {children}
+    </button>
   );
 };
