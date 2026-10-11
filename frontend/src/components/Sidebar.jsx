@@ -24,6 +24,7 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
       >
         <div className="flex h-full flex-col pt-16 lg:pt-0">
           <nav aria-label="Navegación principal" className="flex-1 space-y-2 overflow-y-auto px-4 py-6">
+            {links.logLinks?.map ? null : null}
             {links.map((link) => (
               // `end` evita que "/nutricionista/menus" quede activo estando en "/nutricionista/menus/nuevo"
               <NavLink
@@ -33,7 +34,7 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
                   `block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
-                    isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'
+                    isActive ? 'bg-health-50 text-health-700 font-semibold' : 'text-gray-700 hover:bg-gray-100'
                   }`
                 }
               >
