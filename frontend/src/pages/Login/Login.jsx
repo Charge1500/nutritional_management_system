@@ -16,7 +16,7 @@ const ERROR_MESSAGES = {
 
 const EMPTY_FORM = { id: '', newEmail: '', newPassword: '', identifier: '', password: ''    };
 
-const inputClass = "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
+const inputClass = "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-health-500 focus:border-health-500 sm:text-sm";
 
 export const Login = () => {
   const [isFirstTime, setIsFirstTime] = useState(false);
@@ -68,10 +68,18 @@ export const Login = () => {
 
   return (
     <div className="flex min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">MediCare</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-soft border border-gray-100">
+
+        {/* Cabecera institucional con icono clinico y nombre */}
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 rounded-xl bg-health-50 flex items-center justify-center mb-3">
+            <svg className="h-7 w-7 text-health-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+          </div>      
+          <h2 className="text-3xl font-extrabold text-content tracking-tight">NutriVital</h2>
+          <p className="mt-1 text-xs font-medium uppercase tracking-wider text-health-600">Sistema de Gestión Nutricional</p>
+          <p className="mt-2 text-sm text-content-muted">
             {isFirstTime ? 'Configura tu nueva cuenta' : 'Inicia sesión en tu cuenta'}
           </p>
         </div>
@@ -79,56 +87,64 @@ export const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {isFirstTime ? (
             <>
-              <label htmlFor="id" className="sr-only">ID de usuario</label>
-              <input id="id" name="id" type="text" inputMode="numeric" placeholder="ID de usuario"
+            <div>
+              <label htmlFor="id" className="block text-xs font-medium text-content-muted mb-1">ID de usuario provista</label>
+              <input id="id" name="id" type="text" inputMode="numeric" placeholder="Ejemplo: 1"
                 required autoComplete="username" value={formData.id} onChange={handleChange} className={inputClass} />
-
-              <label htmlFor="newEmail" className="sr-only">Nuevo correo electrónico</label>
-              <input id="newEmail" name="newEmail" type="email" placeholder="Nuevo correo electrónico"
+            </div>
+            <div>
+              <label htmlFor="newEmail" className="block text-xs font-medium text-content-muted mb-1">Nuevo correo electrónico</label>
+              <input id="newEmail" name="newEmail" type="email" placeholder="Ejemplo: usuario@gmail.com"
                 required autoComplete="email" value={formData.newEmail} onChange={handleChange} className={inputClass} />
-
-              <label htmlFor="newPassword" className="sr-only">Nueva contraseña</label>
+            </div>
+            <div>
+              <label htmlFor="newPassword" className="block text-xs font-medium text-content-muted mb-1">Nueva contraseña</label>
               <input id="newPassword" name="newPassword" type="password" placeholder="Nueva contraseña (mínimo 6 caracteres)"
                 required autoComplete="new-password" value={formData.newPassword} onChange={handleChange} className={inputClass} />
-            </>
+            </div>
+          </>
           ) : (
             <>
-              <label htmlFor="identifier" className="sr-only">ID de usuario o correo</label>
-              <input id="identifier" name="identifier" type="text" placeholder="ID de usuario o correo"
+            <div>
+              <label htmlFor="identifier" className="block text-xs font-medium text-content-muted mb-1">ID de usuario o correo</label>
+              <input id="identifier" name="identifier" type="text" placeholder="Ejemplo: 1 o usuario@gmail.com"
                 required autoComplete="username" value={formData.identifier} onChange={handleChange} className={inputClass} />
-
-              <label htmlFor="password" className="sr-only">Contraseña</label>
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-xs font-medium text-content-muted mb-1">Contraseña</label>
               <input id="password" name="password" type="password" placeholder="Contraseña"
                 required autoComplete="current-password" value={formData.password} onChange={handleChange} className={inputClass} />
+            </div>
             </>
           )}
 
           {error && (
-            <p role="alert" className="text-center text-sm text-red-600">
+            <div className='rounded-md bg-red-50 p-3'>
+            <p role="alert" className="text-center text-sm text-red-600"> </p>
               {error}
-            </p>
+            </div>
           )}
 
           <button type="submit"
-            className="flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-health-600 hover:bg-health-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-health-500 transition-colors">
             {isFirstTime ? 'Activar cuenta' : 'Ingresar'}
           </button>
         </form>
 
-        <div className="text-center">
-          <button type="button" onClick={toggleMode} className="text-sm text-blue-600 hover:text-blue-500">
-            {isFirstTime ? 'Ya tengo mi cuenta configurada' : 'Primer acceso'}
+        <div className="text-center pt-2">
+          <button type="button" onClick={toggleMode} className="text-sm font-medium text-health-600 hover:text-health-700 transition-colors">
+            {isFirstTime ? 'Ya tengo mi cuenta configurada' : 'Primer acceso? Activa tu cuenta aquí'}
           </button>
         </div>
 
-        {/* Acceso rápido por rol: solo existe en desarrollo (Vite elimina este bloque en producción) */}
+        {/* Acceso rápido por rol: solo existe en desarrollo */}
         {import.meta.env.DEV && (
-          <div className="border-t border-gray-200 pt-4">
-            <p className="mb-2 text-center text-xs text-gray-500">Acceso rápido (solo desarrollo)</p>
+          <div className="border-t border-gray-100 pt-4 mt'6">
+            <p className="mb-2 text-center text-xs text-content-muted font-semibold uppercase tracking-wider">Acceso rápido (solo desarrollo)</p>
             <div className="grid grid-cols-2 gap-2">
               {Object.values(ROLES).map((rol) => (
                 <button key={rol} type="button" onClick={() => handleAuthResult(loginAsRole(rol))}
-                  className="rounded-md border border-gray-300 px-2 py-1.5 text-xs text-gray-700 hover:bg-gray-100">
+                  className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-content hover:bg-health-50 hover:border-health-200 hover:text-health-700 transition-colors">
                   {ROLE_LABELS[rol]}
                 </button>
               ))}
