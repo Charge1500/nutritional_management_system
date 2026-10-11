@@ -22,13 +22,13 @@ export const Navbar = ({ toggleSidebar }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <span className="text-xl font-bold text-blue-600">MediCare</span>
+            <span className="text-xl font-bold text-health-600">NutriVital</span>
           </div>
 
           <div className="flex items-center space-x-4">
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium text-gray-900">{user?.nombre}</p>
-              <p className="text-xs text-gray-500">{ROLE_LABELS[user?.rol]}</p>
+              <p className="text-xs text-health-600 font-medium">{ROLE_LABELS[user?.rol]}</p>
             </div>
             <button onClick={handleLogout} className="text-sm font-medium text-red-600 hover:text-red-800">
               Cerrar sesión
