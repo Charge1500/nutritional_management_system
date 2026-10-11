@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthProvider } from '../hooks/useAuth';
-import { AppRouter } from '../routes/AppRoutes';
+import { AppRoutes } from '../routes/AppRoutes';
 
 // Datos propios del test: no dependen del mockData real
 vi.mock('../data/mockData', () => ({
@@ -20,7 +20,7 @@ const renderAt = (path) =>
   render(
     <AuthProvider>
       <MemoryRouter initialEntries={[path]}>
-        <AppRouter />
+        <AppRoutes />
       </MemoryRouter>
     </AuthProvider>,
   );
@@ -30,12 +30,14 @@ const setSession = (rol) =>
 
 const heading = (name) => screen.getByRole('heading', { name });
 
+const loginScreen = () => screen.getByText('Inicia sesión en tu cuenta');
+
 describe('Protección de rutas', () => {
   beforeEach(() => localStorage.clear());
 
   it('sin sesión, /admin redirige al login', () => {
     renderAt('/admin');
-    expect(heading('Inicia sesión en tu cuenta')).toBeInTheDocument();
+    expect(loginScreen()).toBeInTheDocument();
   });
 
   it('un paciente que escribe /admin termina en su propio dashboard', () => {
@@ -69,12 +71,12 @@ describe('Protección de rutas', () => {
   ])('ignora una sesión inválida (%s)', (_label, raw) => {
     localStorage.setItem(SESSION_KEY, raw);
     renderAt('/admin');
-    expect(heading('Inicia sesión en tu cuenta')).toBeInTheDocument();
+    expect(loginScreen()).toBeInTheDocument();
   });
 
   it('una URL desconocida sin sesión va al login', () => {
     renderAt('/ruta/que/no/existe');
-    expect(heading('Inicia sesión en tu cuenta')).toBeInTheDocument();
+    expect(loginScreen()).toBeInTheDocument();
   });
 });
 
@@ -149,7 +151,7 @@ describe('Login simulado', () => {
     setSession('jefe');
     renderAt('/jefe');
     await user.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
-    expect(heading('Inicia sesión en tu cuenta')).toBeInTheDocument();
+    expect(loginScreen()).toBeInTheDocument();
     expect(localStorage.getItem(SESSION_KEY)).toBeNull();
   });
 
