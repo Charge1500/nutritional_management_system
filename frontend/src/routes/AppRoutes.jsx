@@ -32,8 +32,8 @@ export function AppRoutes() {
           <Route path="/paciente/valoraciones" element={<Placeholder title="Mis  Valoraciones" />} />
         </Route>
 
-        {/*Rutas exclusivas para Nutricionistas*/}
-        <Route element={<ProtectedRoute allowedRoles={[ROLES.NUTRICIONISTA]} />}>
+        {/*Rutas exclusivas para Nutricionistas y Jefe de Nutrición*/}
+        <Route element={<ProtectedRoute allowedRoles={[ROLES.NUTRICIONISTA, ROLES.JEFE]} />}>
           <Route path="/nutricionista" element={<Placeholder title="Dashboard Nutricionista" />} />
           <Route path="/nutricionista/alimentos" element={<Placeholder title="Gestión de Alimentos" />} />
           <Route path="/nutricionista/alimentos/nuevo" element={<Placeholder title="Crear Alimento" />} />
