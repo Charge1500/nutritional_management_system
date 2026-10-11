@@ -4,10 +4,10 @@ import { isValidRole } from '../data/roles';
 
 const AuthContext = createContext(null);
 
-// Clave de localStorage donde se guarda la sesión (sin contraseña)
+// Clave de localStorage donde se guarda la sesión, sin contraseña por seguridad
 const SESSION_KEY = 'session_user';
 
-// Contraseña temporal que deja el admin al crear una cuenta (solo simulación)
+// Contraseña temporal que deja el admin al crear una cuenta (solo en simulación)
 const TEMP_PASSWORD = '1234';
 const MIN_PASSWORD_LENGTH = 6;
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
