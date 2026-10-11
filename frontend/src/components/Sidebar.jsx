@@ -1,15 +1,15 @@
 import { NavLink } from 'react-router-dom';
-import { userAuth } from '../hooks/userAuth';
+import { useAuth } from '../hooks/useAuth';
 import { NAV_LINKS_BY_ROLE } from '../routes/navigation';
 
 export const Sidebar = ({ isOpen, setIsOpen }) => {
-  const { user } = userAuth();
-  // userAuth garantiza que user.rol es válido; el `?? []` cubre el caso sin sesión
+  const { user } = useAuth();
+  // useAuth garantiza que user.rol es válido, `?? []` cubre el caso sin sesión
   const links = NAV_LINKS_BY_ROLE[user?.rol] ?? [];
 
   return (
     <>
-      {/* Fondo oscuro que cierra el menú al tocar fuera (solo en móvil) */}
+      {/* Fondo oscuro que cierra el menú al tocar fuera (solo oara móviles) */}
       {isOpen && (
         <div 
             className="fixed inset-0 z-20 bg-black/50 lg:hidden" 
@@ -25,7 +25,7 @@ export const Sidebar = ({ isOpen, setIsOpen }) => {
         <div className="flex h-full flex-col pt-16 lg:pt-0">
           <nav aria-label="Navegación principal" className="flex-1 space-y-2 overflow-y-auto px-4 py-6">
             {links.map((link) => (
-              // `end` evita que /nutricionista/menus quede activo estando en /nutricionista/menus/nuevo
+              // `end` evita que "/nutricionista/menus" quede activo estando en "/nutricionista/menus/nuevo"
               <NavLink
                 key={link.path}
                 to={link.path}
