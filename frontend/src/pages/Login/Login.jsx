@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/userAuth';
+import { useAuth } from '../hooks/useAuth';
 import { ROLES, ROLE_HOME, ROLE_LABELS } from '../data/roles';
 
-// Mensajes que ve el usuario para cada código de error del hook useAuth
+// Los mensajes en español que ve el usuario para cada código de error del hook useAuth
 const ERROR_MESSAGES = {
   INVALID_CREDENTIALS: 'Credenciales incorrectas. ID/correo o contraseña incorrectos. Si es tu primer acceso, usa la opción «Primer acceso».',
   NOT_ELIGIBLE: 'ID inválido. No se pudo activar la cuenta. Verifica tu ID o contacta al administrador.',
@@ -26,7 +26,7 @@ export const Login = () => {
   const navigate = useNavigate();
   
   // Si el usuario ya está autenticado, redirigir a su panel correspondiente
-  // (Va después de los hooks para respetar las reglas de React.)
+  // (Va después de los hooks para respetar las reglas de React)
   if (user){
     return <Navigate to={ROLE_HOME[user.rol]} replace />;
   } 
