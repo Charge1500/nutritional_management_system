@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { ROLES, ROLE_HOME, ROLE_LABELS } from '../data/roles';
+import { useAuth } from '../../hooks/useAuth';
+import { ROLES, ROLE_HOME, ROLE_LABELS } from '../../data/roles';
 
 // Los mensajes en español que ve el usuario para cada código de error del hook useAuth
 const ERROR_MESSAGES = {
