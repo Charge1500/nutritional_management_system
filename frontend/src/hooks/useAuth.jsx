@@ -76,16 +76,16 @@ export const AuthProvider = ({ children }) => {
       const wantedId = String(id).trim();
       const pending = dbUsuarios.find((u) => String(u.id_usuario) === wantedId && isPendingActivation(u),);
       
-      if (!pending) return { user: null, error: 'Usuario no elegible' };
+      if (!pending) return { user: null, error: 'NOT_ELIGIBLE' };
 
       const email = newEmail.trim().toLowerCase();
-      if (!EMAIL_REGEX.test(email)) return { user: null, error: 'Correo inválido' };
+      if (!EMAIL_REGEX.test(email)) return { user: null, error: 'INVALID_EMAIL' };
       if (newPassword.length < MIN_PASSWORD_LENGTH || newPassword === TEMP_PASSWORD) {
-        return { user: null, error: 'Contraseña débil' };
+        return { user: null, error: 'WEAK_PASSWORD' };
       }
 
       const emailTaken = dbUsuarios.some((u) => u !== pending && u.email && u.email.toLowerCase() === email,);
-      if (emailTaken) return { user: null, error: 'Correo en uso' };
+      if (emailTaken) return { user: null, error: 'EMAIL_IN_USE' };
 
       const activated = { ...pending, email, contrasenna: newPassword };
       setDbUsuarios((prev) => prev.map((u) => (u === pending ? activated : u)));
@@ -95,9 +95,9 @@ export const AuthProvider = ({ children }) => {
 
   // acceso rápido por rol para desarrollo. En producción no hace nada
   const loginAsRole = useCallback((rol) => {
-      if (!import.meta.env.DEV) return { user: null, error: 'Solo desarrollo' };
-      const found = dbUsuarios.find((u) => u.rol === rol && !isPendingActivation(u));
-      if (!found) return { user: null, error: 'Rol no encontrado' };
+      if (!import.meta.env.DEV) return { user: null, error: 'ONLY_IN_DEVELOP' };
+      const found = dbUsuarios.find((u) => u.rol === rol );
+      if (!found) return { user: null, error: 'ROL_NOT_FOUND' };
       return { user: startSession(found), error: null };},
     [dbUsuarios, startSession],
   );
