@@ -7,27 +7,30 @@ import {
   alimentos,
 } from "../data/mockData";
 
-// Obtiene las dietas autorizadas asociadas a un usuario.
-// Recibe como parámetro el identificador del usuario.
-export const obtenerDietasAutorizadas = (idUsuario) => {
 
- 
-  const idsDietas = atiende
-    .filter((relacion) => relacion.id_usuario === idUsuario)
-    .map((relacion) => relacion.id_dieta);
-  return dietas.filter((dieta) =>
-    idsDietas.includes(dieta.id_dieta)
-  );
+
+// Obtiene todas las dietas para la gestión del jefe.
+export const obtenerTodasLasDietas = () => {
+  return dietas;
 };
 
-
-/**
- * Obtiene una dieta específica por su identificador.
- * Devuelve la dieta encontrada o undefined si no existe.
- */
+// Obtiene una dieta por su identificador.
 export const obtenerDietaPorId = (idDieta) => {
   return dietas.find(
     (dieta) => dieta.id_dieta === Number(idDieta)
+  );
+};
+
+// Obtiene las dietas guardadas y asignadas al nutricionista.
+export const obtenerDietasAutorizadas = (idUsuario) => {
+  const idsDietas = atiende
+    .filter((relacion) => relacion.id_usuario === Number(idUsuario))
+    .map((relacion) => relacion.id_dieta);
+
+  return dietas.filter(
+    (dieta) =>
+      idsDietas.includes(dieta.id_dieta) &&
+      dieta.estado_dieta === "guardado"
   );
 };
 
