@@ -2,10 +2,13 @@ import { obtenerUsuarioPorId } from "../../services/userService";
 import { obtenerDietasAutorizadas } from "../../services/dietService";
 import { DietCard } from "../../components/nutritionist/DietCard";
 import { Card } from "../../components/Card";
+import { useAuth } from "../../hooks/useAuth";
 
 export const NutritionistHome = () => {
+   const { user } = useAuth();
+
   // Obtenemos el usuario simulado que está utilizando la aplicación.
-  const usuarioActual = obtenerUsuarioPorId(1);
+  const usuarioActual = obtenerUsuarioPorId(user.id);
 
   // Obtenemos las dietas autorizadas del usuario.
   // Si no encontramos al usuario, utilizamos un array vacío.
