@@ -3,6 +3,8 @@ import { Login } from '../pages/Login/Login';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { ROLES } from '../data/roles';
+import { NutritionistHome } from '../pages/Nutritionist/NutritionistHome';
+import { DietDetails } from '../pages/Nutritionist/DietDetails';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -34,7 +36,7 @@ export function AppRoutes() {
 
         {/*Rutas exclusivas para Nutricionistas y Jefe de Nutrición*/}
         <Route element={<ProtectedRoute allowedRoles={[ROLES.NUTRICIONISTA, ROLES.JEFE]} />}>
-          <Route path="/nutricionista" element={<Placeholder title="Dashboard Nutricionista" />} />
+          <Route path="/nutricionista" element={<NutritionistHome/>} />
           <Route path="/nutricionista/alimentos" element={<Placeholder title="Gestión de Alimentos" />} />
           <Route path="/nutricionista/alimentos/nuevo" element={<Placeholder title="Crear Alimento" />} />
           <Route path="/nutricionista/ficha-nutricional" element={<Placeholder title="Fichas Nutricionales" />} />
@@ -42,6 +44,7 @@ export function AppRoutes() {
           <Route path="/nutricionista/menus/nuevo" element={<Placeholder title="Crear Menú" />} />
           <Route path="/nutricionista/valoraciones" element={<Placeholder title="Gestión de Valoraciones" />} />
           <Route path="/nutricionista/solicitudes" element={<Placeholder title="Solicitudes de Pacientes" />} />
+          <Route path="/nutricionista/dietas/:id"element={<DietDetails/>}/>
         </Route>
 
         {/*Rutas exclusivas para Jefe de Nutrición*/}
