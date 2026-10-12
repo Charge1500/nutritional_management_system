@@ -8,7 +8,7 @@ export const NutritionistHome = () => {
    const { user } = useAuth();
 
   // Obtenemos el usuario simulado que está utilizando la aplicación.
-  const usuarioActual = obtenerUsuarioPorId(user.id);
+  const usuarioActual = obtenerUsuarioPorId(user.id_usuario);
 
   // Obtenemos las dietas autorizadas del usuario.
   // Si no encontramos al usuario, utilizamos un array vacío.
