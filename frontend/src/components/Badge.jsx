@@ -5,6 +5,8 @@ export const Badge = ({ status }) => {
     aprobado: { bg: 'bg-green-100', text: 'text-status-approved', label: 'Aprobado' },
     rechazado: { bg: 'bg-red-100', text: 'text-status-rejected', label: 'Rechazado' },
     atendida: { bg: 'bg-green-100', text: 'text-status-approved', label: 'Atendida' },
+    guardado: { bg: 'bg-green-100', text: 'text-status-approved', label: 'Guardado' },
+    
   };
 
   const config = statusConfig[status?.toLowerCase()] || statusConfig.borrador;
