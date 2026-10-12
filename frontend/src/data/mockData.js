@@ -2,10 +2,10 @@
 // rol ∈ {paciente, nutricionista, jefe, admin}
 export const usuarios = [
   { id_usuario: 1, nombre: "Ana Pérez",           email: "ana@gmail.com",    contrasenna: "1234", rol: "nutricionista", en_linea: false, fecha_creacion: "2026-01-10", especialidad: "Nutrición clínica",   edad: null, sala: null },
-  { id_usuario: 2, nombre: "Luis Gonzalez",       email: "luis@gmail.com",   contrasenna: "1234", rol: "nutricionista", en_linea: false, fecha_creacion: "2026-01-11", especialidad: "Nutrición deportiva", edad: null, sala: null },
-  { id_usuario: 3, nombre: "Lianet Trujillo",     email: "lianet@gmail.com", contrasenna: "1234", rol: "jefe",          en_linea: false, fecha_creacion: "2026-01-01", especialidad: "Nutrición clínica",   edad: null, sala: null },
-  { id_usuario: 4, nombre: "Roberto Sánchez",     email: "roberto@gmail.com", contrasenna: "1234", rol: "admin",        en_linea: false, fecha_creacion: "2026-01-01", especialidad: null,                  edad: null, sala: null },
-  { id_usuario: 5, nombre: "Carla Ruiz",          email: "carla@gmail.com",      contrasenna: "1234", rol: "paciente",      en_linea: true,  fecha_creacion: "2026-02-01", especialidad: null,                  edad: 34,   sala: "Sala A" },
+  { id_usuario: 2, nombre: "Luis Gonzalez",       email: "luis@gmail.com",   contrasenna: "12345", rol: "nutricionista", en_linea: false, fecha_creacion: "2026-01-11", especialidad: "Nutrición deportiva", edad: null, sala: null },
+  { id_usuario: 3, nombre: "Lianet Trujillo",     email: "lianet@gmail.com", contrasenna: "12345", rol: "jefe",          en_linea: false, fecha_creacion: "2026-01-01", especialidad: "Nutrición clínica",   edad: null, sala: null },
+  { id_usuario: 4, nombre: "Roberto Sánchez",     email: "roberto@gmail.com", contrasenna: "12345", rol: "admin",        en_linea: false, fecha_creacion: "2026-01-01", especialidad: null,                  edad: null, sala: null },
+  { id_usuario: 5, nombre: "Carla Ruiz",          email: "carla@gmail.com",      contrasenna: "12345", rol: "paciente",      en_linea: true,  fecha_creacion: "2026-02-01", especialidad: null,                  edad: 34,   sala: "Sala A" },
   { id_usuario: 6, nombre: "Miguel Torres",       email: "miguel@gmail.com",     contrasenna: "1234", rol: "paciente",      en_linea: false, fecha_creacion: "2026-02-03", especialidad: null,                  edad: 45,   sala: "Sala B" },
   { id_usuario: 7, nombre: "Sofía Díaz",          email: null,                   contrasenna: "1234", rol: "paciente",      en_linea: false, fecha_creacion: "2026-02-05", especialidad: null,                  edad: 28,   sala: "Sala A" },
 ];
