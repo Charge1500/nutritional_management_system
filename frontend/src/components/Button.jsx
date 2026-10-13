@@ -1,19 +1,37 @@
-export const Navbar = ({ userName, role }) => {
+export const Button = ({
+  children,
+  onClick,
+  type = 'button',
+  variant = 'health',
+  className = "",
+  disabled = false,
+  ...props
+}) => {
+  const baseStyles = "inline-flex justify-center items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+
+  // Definimos los estilos visuales disponibles para el botón.
+  // Usa los colores específicos definidos en la config de Tailwind 
+  const variants = {
+    health: "bg-health-600 text-white hover:bg-health-700 focus:ring-health-500 shadow-sm",
+    food: "bg-food-600 text-white hover:bg-food-700 focus:ring-food-500 shadow-sm",
+    outline: "bg-surface border border-gray-300 text-content hover:bg-gray-50 focus:ring-health-500",
+    ghost: "bg-transparent text-content-muted hover:text-content hover:bg-gray-100 focus:ring-gray-500"
+  };
+
   return (
-    <nav className="bg-surface border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40">
-      <div className="flex items-center space-x-2">
-        <div className="h-8 w-8 bg-health-500 rounded-lg"></div>
-        <span className="text-xl font-bold text-content">MediCare</span>
-      </div>
-      <div className="flex items-center space-x-4">
-        <div className="text-sm text-right">
-          <p className="font-medium text-content">{userName || "Usuario"}</p>
-          <p className="text-content-muted capitalize">{role || "Rol"}</p>
-        </div>
-        <button className="text-sm font-medium text-red-500 hover:text-red-700">
-          Cerrar sesión
-        </button>
-      </div>
-    </nav>
+    // Renderizamos el botón con sus propiedades y estilos.
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`
+        ${baseStyles} 
+        ${variants[variant] || variants.health}
+        ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
+        ${className}`}
+        {...props}
+    >
+      {children}
+    </button>
   );
 };

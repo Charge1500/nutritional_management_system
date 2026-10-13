@@ -1,21 +1,126 @@
+import { ROLES } from "./roles";
 
-// rol ∈ {paciente, nutricionista, jefe, admin}
+// ==================== USUARIOS ====================
+// El rol de cada usuario debe coincidir con una constante de ROLES.
+
 export const usuarios = [
-  { id_usuario: 1, nombre: "Ana Pérez",           email: "ana@gmail.com",    contrasenna: "1234", rol: "nutricionista", en_linea: false, fecha_creacion: "2026-01-10", especialidad: "Nutrición clínica",   edad: null, sala: null },
-  { id_usuario: 2, nombre: "Luis Gonzalez",       email: "luis@gmail.com",   contrasenna: "1234", rol: "nutricionista", en_linea: false, fecha_creacion: "2026-01-11", especialidad: "Nutrición deportiva", edad: null, sala: null },
-  { id_usuario: 3, nombre: "Lianet Trujillo",     email: "lianet@gmail.com", contrasenna: "1234", rol: "jefe",          en_linea: false, fecha_creacion: "2026-01-01", especialidad: "Nutrición clínica",   edad: null, sala: null },
-  { id_usuario: 4, nombre: "Roberto Sánchez",     email: "roberto@gmail.com", contrasenna: "1234", rol: "admin",        en_linea: false, fecha_creacion: "2026-01-01", especialidad: null,                  edad: null, sala: null },
-  { id_usuario: 5, nombre: "Carla Ruiz",          email: "carla@gmail.com",      contrasenna: "1234", rol: "paciente",      en_linea: true,  fecha_creacion: "2026-02-01", especialidad: null,                  edad: 34,   sala: "Sala A" },
-  { id_usuario: 6, nombre: "Miguel Torres",       email: "miguel@gmail.com",     contrasenna: "1234", rol: "paciente",      en_linea: false, fecha_creacion: "2026-02-03", especialidad: null,                  edad: 45,   sala: "Sala B" },
-  { id_usuario: 7, nombre: "Sofía Díaz",          email: null,                   contrasenna: "1234", rol: "paciente",      en_linea: false, fecha_creacion: "2026-02-05", especialidad: null,                  edad: 28,   sala: "Sala A" },
+  {
+    id_usuario: 1,
+    nombre: "Ana Pérez",
+    email: "ana@gmail.com",
+    contrasenna: "123456",
+    rol: ROLES.NUTRICIONISTA,
+    en_linea: false,
+    fecha_creacion: "2026-01-10",
+    especialidad: "Nutrición clínica",
+    edad: null,
+    sala: null,
+  },
+  {
+    id_usuario: 2,
+    nombre: "Luis Gonzalez",
+    email: "luis@gmail.com",
+    contrasenna: "123456",
+    rol: ROLES.NUTRICIONISTA,
+    en_linea: false,
+    fecha_creacion: "2026-01-11",
+    especialidad: "Nutrición deportiva",
+    edad: null,
+    sala: null,
+  },
+  {
+    id_usuario: 3,
+    nombre: "Lianet Trujillo",
+    email: "lianet@gmail.com",
+    contrasenna: "123456",
+    rol: ROLES.JEFE,
+    en_linea: false,
+    fecha_creacion: "2026-01-01",
+    especialidad: "Nutrición clínica",
+    edad: null,
+    sala: null,
+  },
+  {
+    id_usuario: 4,
+    nombre: "Roberto Sánchez",
+    email: "roberto@gmail.com",
+    contrasenna: "1234567",
+    rol: ROLES.ADMIN,
+    en_linea: false,
+    fecha_creacion: "2026-01-01",
+    especialidad: null,
+    edad: null,
+    sala: null,
+  },
+  {
+    id_usuario: 5,
+    nombre: "Carla Ruiz",
+    email: "carla@gmail.com",
+    contrasenna: "1234544",
+    rol: ROLES.PACIENTE,
+    en_linea: true,
+    fecha_creacion: "2026-02-01",
+    especialidad: null,
+    edad: 34,
+    sala: "Sala A",
+  },
+  {
+    id_usuario: 6,
+    nombre: "Miguel Torres",
+    email: "miguel@gmail.com",
+    contrasenna: "123444",
+    rol: ROLES.PACIENTE,
+    en_linea: false,
+    fecha_creacion: "2026-02-03",
+    especialidad: null,
+    edad: 45,
+    sala: "Sala B",
+  },
+  {
+    id_usuario: 7,
+    nombre: "Sofía Díaz",
+    email: null,
+    contrasenna: "123456",
+    rol: ROLES.PACIENTE,
+    en_linea: false,
+    fecha_creacion: "2026-02-05",
+    especialidad: null,
+    edad: 28,
+    sala: "Sala A",
+  },
 ];
+
 
 // ==================== R3: DIETA ====================
 // estado_dieta ∈ {borrador, guardado}
 export const dietas = [
-  { id_dieta: 1, nombre_dieta: "Dieta balanceada",            programa: "Control de peso",   fecha_creacion: "2026-02-10", estado_dieta: "guardado" },
-  { id_dieta: 2, nombre_dieta: "Dieta baja en carbohidratos", programa: "Diabetes tipo 2",   fecha_creacion: "2026-02-12", estado_dieta: "guardado" },
-  { id_dieta: 3, nombre_dieta: "Dieta vegetariana",           programa: "Nutrición general", fecha_creacion: "2026-02-15", estado_dieta: "borrador" },
+  {
+    id_dieta: 1,
+    nombre_dieta: "Dieta balanceada",
+    programa: "Control de peso",
+    fecha_creacion: "2026-02-10",
+    estado_dieta: "guardado",
+    calorias_minimas: 1800,
+    calorias_maximas: 2000
+  },
+  {
+    id_dieta: 2,
+    nombre_dieta: "Dieta baja en carbohidratos",
+    programa: "Diabetes tipo 2",
+    fecha_creacion: "2026-02-12",
+    estado_dieta: "guardado",
+    calorias_minimas: 1600,
+    calorias_maximas: 1800
+  },
+  {
+    id_dieta: 3,
+    nombre_dieta: "Dieta vegetariana",
+    programa: "Nutrición general",
+    fecha_creacion: "2026-02-15",
+    estado_dieta: "borrador",
+    calorias_minimas: 1800,
+    calorias_maximas: 2200
+  }
 ];
 
 // ==================== R4: GRUPO NUTRICIONAL ====================
@@ -92,18 +197,32 @@ export const menusAsignados = [
   { id_menu_asignado: 4, id_usuario_nutri: 1, id_usuario_paciente: 7, id_menu: 1, fecha_asignacion: "2026-03-12" },
 ];
 
+
 // ==================== R10: RESTRICCIÓN GRUPO–ALIMENTO ====================
+// Las cantidades mínimas y máximas incluyen su unidad de medida.
+
 export const restriccionesGrupoAlimento = [
-  { id_grupo: 1, id_alimento: 1,  cantidad_minima: 50,  cantidad_maxima: 200 },
-  { id_grupo: 1, id_alimento: 7,  cantidad_minima: 50,  cantidad_maxima: 150 },
-  { id_grupo: 2, id_alimento: 2,  cantidad_minima: 100, cantidad_maxima: 250 },
-  { id_grupo: 2, id_alimento: 8,  cantidad_minima: 100, cantidad_maxima: 200 },
-  { id_grupo: 3, id_alimento: 3,  cantidad_minima: 80,  cantidad_maxima: 200 },
-  { id_grupo: 3, id_alimento: 9,  cantidad_minima: 80,  cantidad_maxima: 200 },
-  { id_grupo: 4, id_alimento: 4,  cantidad_minima: 1,   cantidad_maxima: 3   },
-  { id_grupo: 5, id_alimento: 5,  cantidad_minima: 1,   cantidad_maxima: 2   },
-  { id_grupo: 6, id_alimento: 6,  cantidad_minima: 30,  cantidad_maxima: 100 },
-  { id_grupo: 6, id_alimento: 12, cantidad_minima: 10,  cantidad_maxima: 40  },
+  // Cereales
+  { id_grupo: 1, id_alimento: 1, cantidad_minima: 50,  cantidad_maxima: 200, unidad_medida: "g" },
+  { id_grupo: 1, id_alimento: 7, cantidad_minima: 50,  cantidad_maxima: 150, unidad_medida: "g" },
+
+  // Proteínas
+  { id_grupo: 2, id_alimento: 2, cantidad_minima: 100, cantidad_maxima: 250, unidad_medida: "g" },
+  { id_grupo: 2, id_alimento: 8, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "g" },
+
+  // Vegetales
+  { id_grupo: 3, id_alimento: 3, cantidad_minima: 80,  cantidad_maxima: 200, unidad_medida: "g" },
+  { id_grupo: 3, id_alimento: 9, cantidad_minima: 80,  cantidad_maxima: 200, unidad_medida: "g" },
+
+  // Frutas
+  { id_grupo: 4, id_alimento: 4, cantidad_minima: 1, cantidad_maxima: 3, unidad_medida: "unidades" },
+
+  // Lácteos
+  { id_grupo: 5, id_alimento: 5, cantidad_minima: 1, cantidad_maxima: 2, unidad_medida: "porciones" },
+
+  // Grasas
+  { id_grupo: 6, id_alimento: 6,  cantidad_minima: 30, cantidad_maxima: 100, unidad_medida: "g" },
+  { id_grupo: 6, id_alimento: 12, cantidad_minima: 10, cantidad_maxima: 40,  unidad_medida: "g" },
 ];
 
 // ==================== R11: COBERTURA DIETA–GRUPO ====================
@@ -111,6 +230,15 @@ export const coberturaDietaGrupo = [
   { id_dieta: 1, id_grupo: 1 }, { id_dieta: 1, id_grupo: 2 }, { id_dieta: 1, id_grupo: 3 }, { id_dieta: 1, id_grupo: 4 },
   { id_dieta: 2, id_grupo: 2 }, { id_dieta: 2, id_grupo: 3 },
   { id_dieta: 3, id_grupo: 1 }, { id_dieta: 3, id_grupo: 3 }, { id_dieta: 3, id_grupo: 4 },
+
+];
+
+// ==================== RELACIÓN NUTRICIONISTA–DIETA ====================
+
+export const atiende = [
+  { id_usuario: 1, id_dieta: 1 },
+  { id_usuario: 1, id_dieta: 2 },
+  { id_usuario: 2, id_dieta: 2 },
 ];
 
 // ==================== R12: CONTENIDO MENÚ–ALIMENTO ====================
@@ -154,6 +282,7 @@ export const mockData = {
   usuarios,
   solicitudes,
   dietas,
+  atiende,
   gruposNutricionales,
   menus,
   alimentos,
