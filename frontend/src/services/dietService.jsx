@@ -3,8 +3,8 @@ import {
   atiende,
   gruposNutricionales,
   coberturaDietaGrupo,
-  restriccionesGrupoAlimento,
   alimentos,
+  restriccionesDietaAlimento
 } from "../data/mockData";
 
 
@@ -54,31 +54,23 @@ export const obtenerGruposDeDieta = (idDieta) => {
     .filter(Boolean);
 };
 
-/**
- * Obtiene las restricciones asociadas a los grupos
- * nutricionales que cubre una dieta.
- */
 export const obtenerRestriccionesDeDieta = (idDieta) => {
-  // Primero obtenemos los grupos cubiertos por la dieta.
-  const grupos = obtenerGruposDeDieta(idDieta);
-
-  // Guardamos sus identificadores.
-  const idsGrupos = grupos.map((grupo) => grupo.id_grupo);
-
-  // Buscamos las restricciones que pertenecen a esos grupos.
-  return restriccionesGrupoAlimento
-    .filter((restriccion) =>
-      idsGrupos.includes(restriccion.id_grupo)
+  return restriccionesDietaAlimento
+    .filter(
+      (restriccion) =>
+        restriccion.id_dieta === Number(idDieta)
     )
-    .map((restriccion) => ({
-      ...restriccion,
-      grupo: grupos.find(
-        (grupo) => grupo.id_grupo === restriccion.id_grupo
-      ),
-      alimento: alimentos.find(
+    .map((restriccion) => {
+      const alimento = alimentos.find(
         (alimento) =>
           alimento.id_alimento === restriccion.id_alimento
-      ),
-    }));
+      );
+
+      return {
+        ...restriccion,
+        alimento,
+      };
+    })
+    .filter((restriccion) => restriccion.alimento);
 };
 
