@@ -1,239 +1,160 @@
-import { ROLES } from "./roles";
 
-// ==================== USUARIOS ====================
-// El rol de cada usuario debe coincidir con una constante de ROLES.
+/*
+ * Datos simulados del sistema de gestión para la generación
+ * automática de menús nutricionales.
+ *
+ * Las entidades se mantienen separadas para representar las
+ * relaciones de la base de datos.
+ */
+
+// ============================================================
+// R1. USUARIOS
+// ============================================================
 
 export const usuarios = [
   {
     id_usuario: 1,
-    nombre: "Ana Pérez",
-    email: "ana@gmail.com",
-    contrasenna: "123456",
-    rol: ROLES.NUTRICIONISTA,
-    en_linea: false,
-    fecha_creacion: "2026-01-10",
+    nombre: "Ana",
+    apellidos: "Pérez",
+    correo: "ana.perez@medicare.com",
+    contrasena: "ana123",
+    rol: "nutricionista",
     especialidad: "Nutrición clínica",
-    edad: null,
-    sala: null,
+    estado_usuario: "activo",
   },
   {
     id_usuario: 2,
-    nombre: "Luis Gonzalez",
-    email: "luis@gmail.com",
-    contrasenna: "123456",
-    rol: ROLES.NUTRICIONISTA,
-    en_linea: false,
-    fecha_creacion: "2026-01-11",
+    nombre: "Luis",
+    apellidos: "González",
+    correo: "luis.gonzalez@medicare.com",
+    contrasena: "luis123",
+    rol: "nutricionista",
     especialidad: "Nutrición deportiva",
-    edad: null,
-    sala: null,
+    estado_usuario: "activo",
   },
   {
     id_usuario: 3,
-    nombre: "Lianet Trujillo",
-    email: "lianet@gmail.com",
-    contrasenna: "123456",
-    rol: ROLES.JEFE,
-    en_linea: false,
-    fecha_creacion: "2026-01-01",
-    especialidad: "Nutrición clínica",
-    edad: null,
-    sala: null,
+    nombre: "Lianet",
+    apellidos: "Trujillo",
+    correo: "lianet.trujillo@medicare.com",
+    contrasena: "jefe123",
+    rol: "jefe",
+    especialidad: "Jefatura de nutrición",
+    estado_usuario: "activo",
   },
   {
     id_usuario: 4,
-    nombre: "Roberto Sánchez",
-    email: "roberto@gmail.com",
-    contrasenna: "1234567",
-    rol: ROLES.ADMIN,
-    en_linea: false,
-    fecha_creacion: "2026-01-01",
+    nombre: "Roberto",
+    apellidos: "Sánchez",
+    correo: "roberto.sanchez@medicare.com",
+    contrasena: "admin123",
+    rol: "admin",
     especialidad: null,
-    edad: null,
-    sala: null,
+    estado_usuario: "activo",
   },
   {
     id_usuario: 5,
-    nombre: "Carla Ruiz",
-    email: "carla@gmail.com",
-    contrasenna: "1234544",
-    rol: ROLES.PACIENTE,
-    en_linea: true,
-    fecha_creacion: "2026-02-01",
+    nombre: "Carla",
+    apellidos: "Ruiz",
+    correo: "carla.ruiz@medicare.com",
+    contrasena: "carla123",
+    rol: "paciente",
     especialidad: null,
-    edad: 34,
-    sala: "Sala A",
+    estado_usuario: "activo",
   },
   {
     id_usuario: 6,
-    nombre: "Miguel Torres",
-    email: "miguel@gmail.com",
-    contrasenna: "123444",
-    rol: ROLES.PACIENTE,
-    en_linea: false,
-    fecha_creacion: "2026-02-03",
+    nombre: "Miguel",
+    apellidos: "Torres",
+    correo: "miguel.torres@medicare.com",
+    contrasena: "miguel123",
+    rol: "paciente",
     especialidad: null,
-    edad: 45,
-    sala: "Sala B",
+    estado_usuario: "activo",
   },
   {
     id_usuario: 7,
-    nombre: "Sofía Díaz",
-    email: null,
-    contrasenna: "123456",
-    rol: ROLES.PACIENTE,
-    en_linea: false,
-    fecha_creacion: "2026-02-05",
+    nombre: "Sofía",
+    apellidos: "Díaz",
+    correo: "sofia.diaz@medicare.com",
+    contrasena: "sofia123",
+    rol: "paciente",
     especialidad: null,
-    edad: 28,
-    sala: "Sala A",
+    estado_usuario: "activo",
   },
 ];
 
+// ============================================================
+// R2. SOLICITUDES
+// ============================================================
 
-// ==================== R3: DIETA ====================
-// estado_dieta ∈ {borrador, guardado}
+export const solicitudes = [
+  {
+    id_solicitud: 1,
+    id_usuario: 5,
+    tipo_solicitud: "revaloracion",
+    descripcion: "Solicito una revisión de mi dieta.",
+    estado_solicitud: "pendiente",
+    fecha_solicitud: "2026-10-08",
+    observaciones: null,
+  },
+  {
+    id_solicitud: 2,
+    id_usuario: 6,
+    tipo_solicitud: "cambio_dieta",
+    descripcion: "Solicito revisar mi programa nutricional.",
+    estado_solicitud: "aprobada",
+    fecha_solicitud: "2026-10-09",
+    observaciones: "Solicitud aceptada para revisión.",
+  },
+  {
+    id_solicitud: 3,
+    id_usuario: 7,
+    tipo_solicitud: "revaloracion",
+    descripcion: "Necesito actualizar mi valoración nutricional.",
+    estado_solicitud: "pendiente",
+    fecha_solicitud: "2026-10-11",
+    observaciones: null,
+  },
+];
+
+// ============================================================
+// R3. DIETAS
+// ============================================================
+
 export const dietas = [
   {
     id_dieta: 1,
-    nombre_dieta: "Dieta balanceada",
+    nombre_dieta: "Balanceada",
     programa: "Control de peso",
-    fecha_creacion: "2026-02-10",
+    fecha_creacion: "2026-09-20",
     estado_dieta: "guardado",
     calorias_minimas: 1800,
-    calorias_maximas: 2000
+    calorias_maximas: 2000,
   },
   {
     id_dieta: 2,
-    nombre_dieta: "Dieta baja en carbohidratos",
+    nombre_dieta: "Baja en carbohidratos",
     programa: "Diabetes tipo 2",
-    fecha_creacion: "2026-02-12",
+    fecha_creacion: "2026-09-25",
     estado_dieta: "guardado",
     calorias_minimas: 1600,
-    calorias_maximas: 1800
+    calorias_maximas: 1800,
   },
   {
     id_dieta: 3,
-    nombre_dieta: "Dieta vegetariana",
+    nombre_dieta: "Vegetariana",
     programa: "Nutrición general",
-    fecha_creacion: "2026-02-15",
+    fecha_creacion: "2026-10-01",
     estado_dieta: "borrador",
     calorias_minimas: 1800,
-    calorias_maximas: 2200
-  }
+    calorias_maximas: 2200,
+  },
 ];
 
-// ==================== R4: GRUPO NUTRICIONAL ====================
-// estado_grupo ∈ {borrador, guardado}
-export const gruposNutricionales = [
-  { id_grupo: 1, nombre_grupo: "Cereales",  descripcion: "Arroz, trigo, maíz y derivados", estado_grupo: "guardado", fecha_creacion_grupo: "2026-01-05" },
-  { id_grupo: 2, nombre_grupo: "Proteínas", descripcion: "Carnes, huevos, pescados",       estado_grupo: "guardado", fecha_creacion_grupo: "2026-01-05" },
-  { id_grupo: 3, nombre_grupo: "Vegetales", descripcion: "Verduras y hortalizas",          estado_grupo: "guardado", fecha_creacion_grupo: "2026-01-06" },
-  { id_grupo: 4, nombre_grupo: "Frutas",    descripcion: "Frutas frescas",                 estado_grupo: "guardado", fecha_creacion_grupo: "2026-01-06" },
-  { id_grupo: 5, nombre_grupo: "Lácteos",   descripcion: "Leche y derivados",              estado_grupo: "guardado", fecha_creacion_grupo: "2026-01-07" },
-  { id_grupo: 6, nombre_grupo: "Grasas",    descripcion: "Aceites y frutos secos",         estado_grupo: "borrador", fecha_creacion_grupo: "2026-02-20" },
-];
-
-// ==================== R6: ALIMENTO ====================
-// estado_alimento ∈ {borrador, pendiente, aprobado, rechazado}
-// tipo_preparacion ∈ {entrante, plato fuerte, bebida, postre}
-// nivel_calorico ∈ {bajo, medio, alto}
-export const alimentos = [
-  { id_alimento: 1, nombre_alimento: "Arroz blanco",       tipo_preparacion: "plato fuerte", nivel_calorico: "medio", fecha_creacion_alimento: "2026-02-01", estado_alimento: "aprobado",  id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-02", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 2, nombre_alimento: "Pollo a la plancha", tipo_preparacion: "plato fuerte", nivel_calorico: "medio", fecha_creacion_alimento: "2026-02-01", estado_alimento: "aprobado",  id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-02", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 3, nombre_alimento: "Ensalada verde",     tipo_preparacion: "entrante",     nivel_calorico: "bajo",  fecha_creacion_alimento: "2026-02-03", estado_alimento: "aprobado",  id_usuario_creador: 2, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-04", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 4, nombre_alimento: "Manzana",            tipo_preparacion: "postre",       nivel_calorico: "bajo",  fecha_creacion_alimento: "2026-02-03", estado_alimento: "aprobado",  id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-04", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 5, nombre_alimento: "Yogur natural",      tipo_preparacion: "postre",       nivel_calorico: "bajo",  fecha_creacion_alimento: "2026-02-05", estado_alimento: "aprobado",  id_usuario_creador: 2, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-06", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 6, nombre_alimento: "Aguacate",           tipo_preparacion: "entrante",     nivel_calorico: "alto",  fecha_creacion_alimento: "2026-02-05", estado_alimento: "aprobado",  id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-06", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 7, nombre_alimento: "Pasta integral",     tipo_preparacion: "plato fuerte", nivel_calorico: "medio", fecha_creacion_alimento: "2026-02-07", estado_alimento: "pendiente", id_usuario_creador: 2, id_usuario_jefe: null, fecha_validacion_alimento: null,     observaciones_alimento: null,                        resultado_val_alimento: null },
-  { id_alimento: 8, nombre_alimento: "Salmón",             tipo_preparacion: "plato fuerte", nivel_calorico: "medio", fecha_creacion_alimento: "2026-02-08", estado_alimento: "aprobado",  id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-09", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 9, nombre_alimento: "Brócoli",            tipo_preparacion: "entrante",     nivel_calorico: "bajo",  fecha_creacion_alimento: "2026-02-08", estado_alimento: "aprobado",  id_usuario_creador: 2, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-09", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 10, nombre_alimento: "Jugo de naranja",   tipo_preparacion: "bebida",       nivel_calorico: "bajo",  fecha_creacion_alimento: "2026-02-10", estado_alimento: "aprobado",  id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-11", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-  { id_alimento: 11, nombre_alimento: "Queso fresco",      tipo_preparacion: "entrante",     nivel_calorico: "medio", fecha_creacion_alimento: "2026-02-10", estado_alimento: "rechazado", id_usuario_creador: 2, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-12", observaciones_alimento: "Falta detalle nutricional", resultado_val_alimento: "rechazado" },
-  { id_alimento: 12, nombre_alimento: "Almendras",         tipo_preparacion: "postre",       nivel_calorico: "alto",  fecha_creacion_alimento: "2026-02-11", estado_alimento: "aprobado",  id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_alimento: "2026-02-12", observaciones_alimento: null,                        resultado_val_alimento: "aprobado" },
-];
-
-// ==================== R7: FICHA NUTRICIONAL ====================
-// contenido es JSON (en mock se guarda como string)
-export const fichasNutricionales = [
-  { id_ficha: 1,  id_alimento: 1,  contenido: '{"calorias_totales":195,"macronutrientes":{"carbos":45,"proteinas":4,"grasas":0.5},"alergenos":[]}' },
-  { id_ficha: 2,  id_alimento: 2,  contenido: '{"calorias_totales":330,"macronutrientes":{"carbos":0,"proteinas":62,"grasas":7},"alergenos":[]}' },
-  { id_ficha: 3,  id_alimento: 3,  contenido: '{"calorias_totales":45,"macronutrientes":{"carbos":8,"proteinas":2,"grasas":0.3},"alergenos":[]}' },
-  { id_ficha: 4,  id_alimento: 4,  contenido: '{"calorias_totales":95,"macronutrientes":{"carbos":25,"proteinas":0.5,"grasas":0.3},"alergenos":[]}' },
-  { id_ficha: 5,  id_alimento: 5,  contenido: '{"calorias_totales":120,"macronutrientes":{"carbos":12,"proteinas":8,"grasas":4},"alergenos":["lactosa"]}' },
-  { id_ficha: 6,  id_alimento: 6,  contenido: '{"calorias_totales":240,"macronutrientes":{"carbos":12,"proteinas":3,"grasas":22},"alergenos":[]}' },
-  { id_ficha: 7,  id_alimento: 7,  contenido: '{"calorias_totales":220,"macronutrientes":{"carbos":43,"proteinas":8,"grasas":1.5},"alergenos":["gluten"]}' },
-  { id_ficha: 8,  id_alimento: 8,  contenido: '{"calorias_totales":280,"macronutrientes":{"carbos":0,"proteinas":40,"grasas":13},"alergenos":["pescado"]}' },
-  { id_ficha: 9,  id_alimento: 9,  contenido: '{"calorias_totales":34,"macronutrientes":{"carbos":7,"proteinas":3,"grasas":0.4},"alergenos":[]}' },
-  { id_ficha: 10, id_alimento: 10, contenido: '{"calorias_totales":110,"macronutrientes":{"carbos":26,"proteinas":2,"grasas":0.2},"alergenos":[]}' },
-  { id_ficha: 11, id_alimento: 11, contenido: '{"calorias_totales":180,"macronutrientes":{"carbos":2,"proteinas":14,"grasas":13},"alergenos":["lactosa"]}' },
-  { id_ficha: 12, id_alimento: 12, contenido: '{"calorias_totales":170,"macronutrientes":{"carbos":6,"proteinas":6,"grasas":15},"alergenos":["frutos secos"]}' },
-];
-
-// ==================== R5: MENÚ ====================
-// estado_menu ∈ {borrador, pendiente, aprobado, rechazado}
-export const menus = [
-  { id_menu: 1, nombre_menu: "Menú desayuno saludable", proporcion_preparacion: "1 entrante, 1 plato fuerte, 1 bebida", fecha_creacion_menu: "2026-03-01", estado_menu: "aprobado",  id_dieta: 1, id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_menu: "2026-03-02", observaciones_menu: null,                    resultado_val_menu: "aprobado" },
-  { id_menu: 2, nombre_menu: "Menú almuerzo completo",  proporcion_preparacion: "1 entrante, 1 plato fuerte, 1 postre", fecha_creacion_menu: "2026-03-03", estado_menu: "aprobado",  id_dieta: 1, id_usuario_creador: 1, id_usuario_jefe: 3, fecha_validacion_menu: "2026-03-04", observaciones_menu: null,                    resultado_val_menu: "aprobado" },
-  { id_menu: 3, nombre_menu: "Menú cena ligera",        proporcion_preparacion: "1 entrante, 1 plato fuerte",           fecha_creacion_menu: "2026-03-05", estado_menu: "aprobado",  id_dieta: 2, id_usuario_creador: 2, id_usuario_jefe: 3, fecha_validacion_menu: "2026-03-06", observaciones_menu: null,                    resultado_val_menu: "aprobado" },
-  { id_menu: 4, nombre_menu: "Menú snack tarde",        proporcion_preparacion: "1 postre, 1 bebida",                   fecha_creacion_menu: "2026-03-07", estado_menu: "rechazado", id_dieta: 2, id_usuario_creador: 2, id_usuario_jefe: 3, fecha_validacion_menu: "2026-03-08", observaciones_menu: "Excede nivel calórico", resultado_val_menu: "rechazado" },
-  { id_menu: 5, nombre_menu: "Menú vegetariano",        proporcion_preparacion: "1 entrante, 1 plato fuerte",           fecha_creacion_menu: "2026-03-09", estado_menu: "pendiente", id_dieta: 3, id_usuario_creador: 1, id_usuario_jefe: null, fecha_validacion_menu: null,     observaciones_menu: null,                    resultado_val_menu: null },
-];
-
-// ==================== R8: VALORACIÓN NUTRICIONAL ====================
-// tipo_val ∈ {ordinaria, revalorización}
-export const valoraciones = [
-  { id_valoracion: 1, id_usuario_nutri: 1, id_usuario_paciente: 5, fecha_valoracion: "2026-03-10", puntuacion: 85, observaciones_val: "Buena evolución",  tipo_val: "ordinaria",      id_dieta: 1 },
-  { id_valoracion: 2, id_usuario_nutri: 2, id_usuario_paciente: 6, fecha_valoracion: "2026-03-11", puntuacion: 60, observaciones_val: "Requiere ajustes", tipo_val: "ordinaria",      id_dieta: 2 },
-  { id_valoracion: 3, id_usuario_nutri: 1, id_usuario_paciente: 5, fecha_valoracion: "2026-03-12", puntuacion: 90, observaciones_val: "Mejora notable",   tipo_val: "revalorización", id_dieta: 1 },
-  { id_valoracion: 4, id_usuario_nutri: 2, id_usuario_paciente: 7, fecha_valoracion: "2026-03-13", puntuacion: 75, observaciones_val: null,               tipo_val: "ordinaria",      id_dieta: 3 },
-];
-
-// ==================== R9: MENÚ ASIGNADO ====================
-export const menusAsignados = [
-  { id_menu_asignado: 1, id_usuario_nutri: 1, id_usuario_paciente: 5, id_menu: 1, fecha_asignacion: "2026-03-10" },
-  { id_menu_asignado: 2, id_usuario_nutri: 1, id_usuario_paciente: 5, id_menu: 2, fecha_asignacion: "2026-03-11" },
-  { id_menu_asignado: 3, id_usuario_nutri: 2, id_usuario_paciente: 6, id_menu: 3, fecha_asignacion: "2026-03-11" },
-  { id_menu_asignado: 4, id_usuario_nutri: 1, id_usuario_paciente: 7, id_menu: 1, fecha_asignacion: "2026-03-12" },
-];
-
-
-// ==================== R10: RESTRICCIÓN GRUPO–ALIMENTO ====================
-// Las cantidades mínimas y máximas incluyen su unidad de medida.
-
-export const restriccionesGrupoAlimento = [
-  // Cereales
-  { id_grupo: 1, id_alimento: 1, cantidad_minima: 50,  cantidad_maxima: 200, unidad_medida: "g" },
-  { id_grupo: 1, id_alimento: 7, cantidad_minima: 50,  cantidad_maxima: 150, unidad_medida: "g" },
-
-  // Proteínas
-  { id_grupo: 2, id_alimento: 2, cantidad_minima: 100, cantidad_maxima: 250, unidad_medida: "g" },
-  { id_grupo: 2, id_alimento: 8, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "g" },
-
-  // Vegetales
-  { id_grupo: 3, id_alimento: 3, cantidad_minima: 80,  cantidad_maxima: 200, unidad_medida: "g" },
-  { id_grupo: 3, id_alimento: 9, cantidad_minima: 80,  cantidad_maxima: 200, unidad_medida: "g" },
-
-  // Frutas
-  { id_grupo: 4, id_alimento: 4, cantidad_minima: 1, cantidad_maxima: 3, unidad_medida: "unidades" },
-
-  // Lácteos
-  { id_grupo: 5, id_alimento: 5, cantidad_minima: 1, cantidad_maxima: 2, unidad_medida: "porciones" },
-
-  // Grasas
-  { id_grupo: 6, id_alimento: 6,  cantidad_minima: 30, cantidad_maxima: 100, unidad_medida: "g" },
-  { id_grupo: 6, id_alimento: 12, cantidad_minima: 10, cantidad_maxima: 40,  unidad_medida: "g" },
-];
-
-// ==================== R11: COBERTURA DIETA–GRUPO ====================
-export const coberturaDietaGrupo = [
-  { id_dieta: 1, id_grupo: 1 }, { id_dieta: 1, id_grupo: 2 }, { id_dieta: 1, id_grupo: 3 }, { id_dieta: 1, id_grupo: 4 },
-  { id_dieta: 2, id_grupo: 2 }, { id_dieta: 2, id_grupo: 3 },
-  { id_dieta: 3, id_grupo: 1 }, { id_dieta: 3, id_grupo: 3 }, { id_dieta: 3, id_grupo: 4 },
-
-];
-
-// ==================== RELACIÓN NUTRICIONISTA–DIETA ====================
+// ============================================================
+// R4. NUTRICIONISTAS QUE ATIENDEN DIETAS
+// ============================================================
 
 export const atiende = [
   { id_usuario: 1, id_dieta: 1 },
@@ -241,57 +162,877 @@ export const atiende = [
   { id_usuario: 2, id_dieta: 2 },
 ];
 
-// ==================== R12: CONTENIDO MENÚ–ALIMENTO ====================
+// ============================================================
+// R5. GRUPOS NUTRICIONALES
+// ============================================================
+
+export const gruposNutricionales = [
+  {
+    id_grupo_nutricional: 1,
+    nombre_grupo: "Cereales",
+    descripcion: "Cereales y alimentos derivados.",
+    estado_grupo: "guardado",
+  },
+  {
+    id_grupo_nutricional: 2,
+    nombre_grupo: "Proteínas",
+    descripcion: "Alimentos que aportan proteínas.",
+    estado_grupo: "guardado",
+  },
+  {
+    id_grupo_nutricional: 3,
+    nombre_grupo: "Vegetales",
+    descripcion: "Verduras y hortalizas.",
+    estado_grupo: "guardado",
+  },
+  {
+    id_grupo_nutricional: 4,
+    nombre_grupo: "Frutas",
+    descripcion: "Frutas y alimentos derivados.",
+    estado_grupo: "guardado",
+  },
+  {
+    id_grupo_nutricional: 5,
+    nombre_grupo: "Lácteos",
+    descripcion: "Leche y productos lácteos.",
+    estado_grupo: "guardado",
+  },
+  {
+    id_grupo_nutricional: 6,
+    nombre_grupo: "Grasas",
+    descripcion: "Alimentos ricos en grasas.",
+    estado_grupo: "borrador",
+  },
+];
+
+// ============================================================
+// R6. ALIMENTOS
+// ============================================================
+
+export const alimentos = [
+  {
+    id_alimento: 1,
+    nombre_alimento: "Arroz blanco",
+    tipo_preparacion: "plato fuerte",
+    nivel_calorico: "medio",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-20",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 1,
+    fecha_validacion: "2026-09-21",
+    observaciones: null,
+  },
+  {
+    id_alimento: 2,
+    nombre_alimento: "Pollo a la plancha",
+    tipo_preparacion: "plato fuerte",
+    nivel_calorico: "medio",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-20",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 1,
+    fecha_validacion: "2026-09-21",
+    observaciones: null,
+  },
+  {
+    id_alimento: 3,
+    nombre_alimento: "Ensalada verde",
+    tipo_preparacion: "entrante",
+    nivel_calorico: "bajo",
+    tipo_alimento: "compuesto",
+    fecha_creacion: "2026-09-21",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 1,
+    fecha_validacion: "2026-09-22",
+    observaciones: null,
+  },
+  {
+    id_alimento: 4,
+    nombre_alimento: "Manzana",
+    tipo_preparacion: "postre",
+    nivel_calorico: "bajo",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-22",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 1,
+    fecha_validacion: "2026-09-23",
+    observaciones: null,
+  },
+  {
+    id_alimento: 5,
+    nombre_alimento: "Yogur natural",
+    tipo_preparacion: "postre",
+    nivel_calorico: "medio",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-22",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 2,
+    fecha_validacion: "2026-09-23",
+    observaciones: null,
+  },
+  {
+    id_alimento: 6,
+    nombre_alimento: "Aguacate",
+    tipo_preparacion: "entrante",
+    nivel_calorico: "alto",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-23",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 1,
+    fecha_validacion: "2026-09-24",
+    observaciones: null,
+  },
+  {
+    id_alimento: 7,
+    nombre_alimento: "Pasta integral",
+    tipo_preparacion: "plato fuerte",
+    nivel_calorico: "medio",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-25",
+    estado_alimento: "pendiente",
+    id_usuario_creador: 2,
+    fecha_validacion: null,
+    observaciones: null,
+  },
+  {
+    id_alimento: 8,
+    nombre_alimento: "Salmón",
+    tipo_preparacion: "plato fuerte",
+    nivel_calorico: "alto",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-26",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 2,
+    fecha_validacion: "2026-09-27",
+    observaciones: null,
+  },
+  {
+    id_alimento: 9,
+    nombre_alimento: "Brócoli",
+    tipo_preparacion: "entrante",
+    nivel_calorico: "bajo",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-26",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 1,
+    fecha_validacion: "2026-09-27",
+    observaciones: null,
+  },
+  {
+    id_alimento: 10,
+    nombre_alimento: "Jugo de naranja",
+    tipo_preparacion: "bebida",
+    nivel_calorico: "medio",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-27",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 2,
+    fecha_validacion: "2026-09-28",
+    observaciones: null,
+  },
+  {
+    id_alimento: 11,
+    nombre_alimento: "Queso fresco",
+    tipo_preparacion: "entrante",
+    nivel_calorico: "medio",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-28",
+    estado_alimento: "rechazado",
+    id_usuario_creador: 2,
+    fecha_validacion: "2026-09-29",
+    observaciones: "Debe completarse la información nutricional.",
+  },
+  {
+    id_alimento: 12,
+    nombre_alimento: "Almendras",
+    tipo_preparacion: "postre",
+    nivel_calorico: "alto",
+    tipo_alimento: "simple",
+    fecha_creacion: "2026-09-29",
+    estado_alimento: "aprobado",
+    id_usuario_creador: 1,
+    fecha_validacion: "2026-09-30",
+    observaciones: null,
+  },
+];
+
+// ============================================================
+// R7. FICHAS NUTRICIONALES
+// ============================================================
+
+export const fichasNutricionales = [
+  {
+    id_ficha: 1,
+    id_alimento: 1,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Arroz blanco cocido",
+      porcion: 100,
+      unidad: "g",
+      calorias: 130,
+      proteinas: 2.7,
+      carbohidratos: 28,
+      grasas: 0.3,
+      alergenos: [],
+    }),
+    calorias: 130,
+    proteinas: 2.7,
+    carbohidratos: 28,
+    grasas: 0.3,
+    alergenos: [],
+  },
+  {
+    id_ficha: 2,
+    id_alimento: 2,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Pollo a la plancha",
+      porcion: 100,
+      unidad: "g",
+      calorias: 165,
+      proteinas: 31,
+      carbohidratos: 0,
+      grasas: 3.6,
+      alergenos: [],
+    }),
+    calorias: 165,
+    proteinas: 31,
+    carbohidratos: 0,
+    grasas: 3.6,
+    alergenos: [],
+  },
+  {
+    id_ficha: 3,
+    id_alimento: 3,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Ensalada verde",
+      porcion: 100,
+      unidad: "g",
+      calorias: 25,
+      proteinas: 1.5,
+      carbohidratos: 4,
+      grasas: 0.3,
+      alergenos: [],
+    }),
+    calorias: 25,
+    proteinas: 1.5,
+    carbohidratos: 4,
+    grasas: 0.3,
+    alergenos: [],
+  },
+  {
+    id_ficha: 4,
+    id_alimento: 4,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Manzana",
+      porcion: 100,
+      unidad: "g",
+      calorias: 52,
+      proteinas: 0.3,
+      carbohidratos: 14,
+      grasas: 0.2,
+      alergenos: [],
+    }),
+    calorias: 52,
+    proteinas: 0.3,
+    carbohidratos: 14,
+    grasas: 0.2,
+    alergenos: [],
+  },
+  {
+    id_ficha: 5,
+    id_alimento: 5,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Yogur natural",
+      porcion: 100,
+      unidad: "g",
+      calorias: 61,
+      proteinas: 3.5,
+      carbohidratos: 4.7,
+      grasas: 3.3,
+      alergenos: ["leche"],
+    }),
+    calorias: 61,
+    proteinas: 3.5,
+    carbohidratos: 4.7,
+    grasas: 3.3,
+    alergenos: ["leche"],
+  },
+  {
+    id_ficha: 6,
+    id_alimento: 6,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Aguacate",
+      porcion: 100,
+      unidad: "g",
+      calorias: 160,
+      proteinas: 2,
+      carbohidratos: 8.5,
+      grasas: 14.7,
+      alergenos: [],
+    }),
+    calorias: 160,
+    proteinas: 2,
+    carbohidratos: 8.5,
+    grasas: 14.7,
+    alergenos: [],
+  },
+  {
+    id_ficha: 7,
+    id_alimento: 7,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Pasta integral cocida",
+      porcion: 100,
+      unidad: "g",
+      calorias: 149,
+      proteinas: 5.5,
+      carbohidratos: 30,
+      grasas: 1.5,
+      alergenos: ["gluten"],
+    }),
+    calorias: 149,
+    proteinas: 5.5,
+    carbohidratos: 30,
+    grasas: 1.5,
+    alergenos: ["gluten"],
+  },
+  {
+    id_ficha: 8,
+    id_alimento: 8,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Salmón",
+      porcion: 100,
+      unidad: "g",
+      calorias: 208,
+      proteinas: 20,
+      carbohidratos: 0,
+      grasas: 13,
+      alergenos: ["pescado"],
+    }),
+    calorias: 208,
+    proteinas: 20,
+    carbohidratos: 0,
+    grasas: 13,
+    alergenos: ["pescado"],
+  },
+  {
+    id_ficha: 9,
+    id_alimento: 9,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Brócoli",
+      porcion: 100,
+      unidad: "g",
+      calorias: 34,
+      proteinas: 2.8,
+      carbohidratos: 6.6,
+      grasas: 0.4,
+      alergenos: [],
+    }),
+    calorias: 34,
+    proteinas: 2.8,
+    carbohidratos: 6.6,
+    grasas: 0.4,
+    alergenos: [],
+  },
+  {
+    id_ficha: 10,
+    id_alimento: 10,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Jugo de naranja",
+      porcion: 100,
+      unidad: "ml",
+      calorias: 45,
+      proteinas: 0.7,
+      carbohidratos: 10.4,
+      grasas: 0.2,
+      alergenos: [],
+    }),
+    calorias: 45,
+    proteinas: 0.7,
+    carbohidratos: 10.4,
+    grasas: 0.2,
+    alergenos: [],
+  },
+  {
+    id_ficha: 11,
+    id_alimento: 11,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Queso fresco",
+      porcion: 100,
+      unidad: "g",
+      calorias: 250,
+      proteinas: 18,
+      carbohidratos: 3,
+      grasas: 19,
+      alergenos: ["leche"],
+    }),
+    calorias: 250,
+    proteinas: 18,
+    carbohidratos: 3,
+    grasas: 19,
+    alergenos: ["leche"],
+  },
+  {
+    id_ficha: 12,
+    id_alimento: 12,
+    informacion_nutricional: JSON.stringify({
+      descripcion: "Almendras",
+      porcion: 100,
+      unidad: "g",
+      calorias: 579,
+      proteinas: 21,
+      carbohidratos: 22,
+      grasas: 50,
+      alergenos: ["frutos secos"],
+    }),
+    calorias: 579,
+    proteinas: 21,
+    carbohidratos: 22,
+    grasas: 50,
+    alergenos: ["frutos secos"],
+  },
+];
+
+// ============================================================
+// R8. MENÚS
+// ============================================================
+
+export const menus = [
+  {
+    id_menu: 1,
+    nombre_menu: "Desayuno balanceado",
+    tipo_comida: "desayuno",
+    id_dieta: 1,
+    id_usuario_creador: 1,
+    fecha_creacion: "2026-10-01",
+    estado_menu: "aprobado",
+    fecha_validacion: "2026-10-02",
+    observaciones: null,
+    proporcion_preparacion: "Preparación según las cantidades indicadas.",
+  },
+  {
+    id_menu: 2,
+    nombre_menu: "Almuerzo balanceado",
+    tipo_comida: "almuerzo",
+    id_dieta: 1,
+    id_usuario_creador: 1,
+    fecha_creacion: "2026-10-02",
+    estado_menu: "aprobado",
+    fecha_validacion: "2026-10-03",
+    observaciones: null,
+    proporcion_preparacion: "Cocinar el pollo a la plancha y servir con arroz y vegetales.",
+  },
+  {
+    id_menu: 3,
+    nombre_menu: "Cena baja en carbohidratos",
+    tipo_comida: "cena",
+    id_dieta: 2,
+    id_usuario_creador: 2,
+    fecha_creacion: "2026-10-03",
+    estado_menu: "aprobado",
+    fecha_validacion: "2026-10-04",
+    observaciones: null,
+    proporcion_preparacion: "Preparar el salmón y acompañar con vegetales.",
+  },
+  {
+    id_menu: 4,
+    nombre_menu: "Merienda baja en carbohidratos",
+    tipo_comida: "merienda",
+    id_dieta: 2,
+    id_usuario_creador: 2,
+    fecha_creacion: "2026-10-04",
+    estado_menu: "rechazado",
+    fecha_validacion: "2026-10-05",
+    observaciones: "Excede el nivel calórico previsto para la propuesta.",
+    proporcion_preparacion: "Servir los alimentos en las porciones indicadas.",
+  },
+  {
+    id_menu: 5,
+    nombre_menu: "Almuerzo vegetariano",
+    tipo_comida: "almuerzo",
+    id_dieta: 3,
+    id_usuario_creador: 1,
+    fecha_creacion: "2026-10-05",
+    estado_menu: "pendiente",
+    fecha_validacion: null,
+    observaciones: null,
+    proporcion_preparacion: "Preparar los alimentos según las cantidades propuestas.",
+  },
+];
+
+// ============================================================
+// R9. VALORACIONES NUTRICIONALES
+// ============================================================
+
+export const valoraciones = [
+  {
+    id_valoracion: 1,
+    id_usuario: 5,
+    id_usuario_nutricionista: 1,
+    fecha_valoracion: "2026-09-25",
+    peso: 68,
+    altura: 1.65,
+    observaciones: "Valoración inicial.",
+  },
+  {
+    id_valoracion: 2,
+    id_usuario: 6,
+    id_usuario_nutricionista: 2,
+    fecha_valoracion: "2026-09-26",
+    peso: 80,
+    altura: 1.75,
+    observaciones: "Seguimiento nutricional.",
+  },
+  {
+    id_valoracion: 3,
+    id_usuario: 7,
+    id_usuario_nutricionista: 1,
+    fecha_valoracion: "2026-09-27",
+    peso: 58,
+    altura: 1.62,
+    observaciones: "Valoración inicial.",
+  },
+  {
+    id_valoracion: 4,
+    id_usuario: 5,
+    id_usuario_nutricionista: 1,
+    fecha_valoracion: "2026-10-10",
+    peso: 67.5,
+    altura: 1.65,
+    observaciones: "Valoración de seguimiento.",
+  },
+];
+
+// ============================================================
+// R10. MENÚS ASIGNADOS A PACIENTES
+// ============================================================
+
+export const menusAsignados = [
+  {
+    id_asignacion: 1,
+    id_menu: 1,
+    id_usuario: 5,
+    fecha_asignacion: "2026-10-03",
+    estado_asignacion: "activo",
+  },
+  {
+    id_asignacion: 2,
+    id_menu: 2,
+    id_usuario: 5,
+    fecha_asignacion: "2026-10-03",
+    estado_asignacion: "activo",
+  },
+  {
+    id_asignacion: 3,
+    id_menu: 3,
+    id_usuario: 6,
+    fecha_asignacion: "2026-10-04",
+    estado_asignacion: "activo",
+  },
+  {
+    id_asignacion: 4,
+    id_menu: 1,
+    id_usuario: 7,
+    fecha_asignacion: "2026-10-06",
+    estado_asignacion: "activo",
+  },
+];
+
+// ============================================================
+// R11. RESTRICCIONES POR DIETA Y ALIMENTO
+//
+// IMPORTANTE:
+// Las cantidades permitidas pertenecen a la combinación
+// dieta-alimento, no al grupo nutricional.
+//
+// El mismo alimento puede tener cantidades distintas
+// en dietas diferentes.
+// ============================================================
+
+export const restriccionesDietaAlimento = [
+  // Dieta 1: Control de peso
+  {
+    id_dieta: 1,
+    id_alimento: 1,
+    cantidad_minima: 50,
+    cantidad_maxima: 150,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 1,
+    id_alimento: 2,
+    cantidad_minima: 100,
+    cantidad_maxima: 200,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 1,
+    id_alimento: 3,
+    cantidad_minima: 80,
+    cantidad_maxima: 200,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 1,
+    id_alimento: 4,
+    cantidad_minima: 1,
+    cantidad_maxima: 2,
+    unidad_medida: "unidades",
+  },
+  {
+    id_dieta: 1,
+    id_alimento: 6,
+    cantidad_minima: 30,
+    cantidad_maxima: 60,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 1,
+    id_alimento: 10,
+    cantidad_minima: 100,
+    cantidad_maxima: 200,
+    unidad_medida: "ml",
+  },
+
+  // Dieta 2: Diabetes tipo 2
+  {
+    id_dieta: 2,
+    id_alimento: 1,
+    cantidad_minima: 50,
+    cantidad_maxima: 100,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 2,
+    id_alimento: 2,
+    cantidad_minima: 100,
+    cantidad_maxima: 200,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 2,
+    id_alimento: 8,
+    cantidad_minima: 100,
+    cantidad_maxima: 180,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 2,
+    id_alimento: 9,
+    cantidad_minima: 80,
+    cantidad_maxima: 200,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 2,
+    id_alimento: 10,
+    cantidad_minima: 0,
+    cantidad_maxima: 100,
+    unidad_medida: "ml",
+  },
+
+  // Dieta 3: Nutrición general vegetariana
+  {
+    id_dieta: 3,
+    id_alimento: 1,
+    cantidad_minima: 100,
+    cantidad_maxima: 200,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 3,
+    id_alimento: 3,
+    cantidad_minima: 100,
+    cantidad_maxima: 200,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 3,
+    id_alimento: 4,
+    cantidad_minima: 1,
+    cantidad_maxima: 3,
+    unidad_medida: "unidades",
+  },
+  {
+    id_dieta: 3,
+    id_alimento: 5,
+    cantidad_minima: 1,
+    cantidad_maxima: 2,
+    unidad_medida: "porciones",
+  },
+  {
+    id_dieta: 3,
+    id_alimento: 6,
+    cantidad_minima: 20,
+    cantidad_maxima: 60,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 3,
+    id_alimento: 9,
+    cantidad_minima: 100,
+    cantidad_maxima: 200,
+    unidad_medida: "g",
+  },
+  {
+    id_dieta: 3,
+    id_alimento: 12,
+    cantidad_minima: 10,
+    cantidad_maxima: 30,
+    unidad_medida: "g",
+  },
+];
+
+// ============================================================
+// R12. COBERTURA DE DIETAS POR GRUPOS NUTRICIONALES
+//
+// Esta relación indica qué grupos debe cubrir cada dieta.
+// No almacena cantidades ni restricciones de alimentos.
+// ============================================================
+
+export const coberturaDietaGrupo = [
+  // Dieta 1: Control de peso
+  { id_dieta: 1, id_grupo_nutricional: 1 },
+  { id_dieta: 1, id_grupo_nutricional: 2 },
+  { id_dieta: 1, id_grupo_nutricional: 3 },
+  { id_dieta: 1, id_grupo_nutricional: 4 },
+
+  // Dieta 2: Diabetes tipo 2
+  { id_dieta: 2, id_grupo_nutricional: 2 },
+  { id_dieta: 2, id_grupo_nutricional: 3 },
+
+  // Dieta 3: Nutrición general vegetariana
+  { id_dieta: 3, id_grupo_nutricional: 1 },
+  { id_dieta: 3, id_grupo_nutricional: 3 },
+  { id_dieta: 3, id_grupo_nutricional: 4 },
+];
+
+// ============================================================
+// R13. RELACIÓN ALIMENTO–GRUPO NUTRICIONAL
+//
+// Esta relación clasifica los alimentos.
+// No incluye cantidades mínimas ni máximas.
+// ============================================================
+
+export const alimentosGruposNutricionales = [
+  { id_alimento: 1, id_grupo_nutricional: 1 },  // Arroz blanco: Cereales
+  { id_alimento: 2, id_grupo_nutricional: 2 },  // Pollo: Proteínas
+  { id_alimento: 3, id_grupo_nutricional: 3 },  // Ensalada verde: Vegetales
+  { id_alimento: 4, id_grupo_nutricional: 4 },  // Manzana: Frutas
+  { id_alimento: 5, id_grupo_nutricional: 5 },  // Yogur: Lácteos
+  { id_alimento: 6, id_grupo_nutricional: 6 },  // Aguacate: Grasas
+  { id_alimento: 7, id_grupo_nutricional: 1 },  // Pasta integral: Cereales
+  { id_alimento: 8, id_grupo_nutricional: 2 },  // Salmón: Proteínas
+  { id_alimento: 9, id_grupo_nutricional: 3 },  // Brócoli: Vegetales
+  { id_alimento: 10, id_grupo_nutricional: 4 }, // Jugo de naranja: Frutas
+  { id_alimento: 11, id_grupo_nutricional: 5 }, // Queso fresco: Lácteos
+  { id_alimento: 12, id_grupo_nutricional: 6 }, // Almendras: Grasas
+];
+
+// ============================================================
+// R14. CONTENIDO DE LOS MENÚS
+// ============================================================
+
 export const contenidoMenuAlimento = [
-  { id_menu: 1, id_alimento: 4 },  { id_menu: 1, id_alimento: 5 },  { id_menu: 1, id_alimento: 10 },
-  { id_menu: 2, id_alimento: 1 },  { id_menu: 2, id_alimento: 2 },  { id_menu: 2, id_alimento: 3 },  { id_menu: 2, id_alimento: 6 },
-  { id_menu: 3, id_alimento: 8 },  { id_menu: 3, id_alimento: 9 },
-  { id_menu: 4, id_alimento: 12 }, { id_menu: 4, id_alimento: 10 },
-  { id_menu: 5, id_alimento: 1 },  { id_menu: 5, id_alimento: 3 },  { id_menu: 5, id_alimento: 9 },
+  // Desayuno balanceado
+  { id_menu: 1, id_alimento: 5, cantidad: 150, unidad_medida: "g" },
+  { id_menu: 1, id_alimento: 4, cantidad: 1, unidad_medida: "unidades" },
+
+  // Almuerzo balanceado
+  { id_menu: 2, id_alimento: 1, cantidad: 100, unidad_medida: "g" },
+  { id_menu: 2, id_alimento: 2, cantidad: 150, unidad_medida: "g" },
+  { id_menu: 2, id_alimento: 3, cantidad: 100, unidad_medida: "g" },
+
+  // Cena baja en carbohidratos
+  { id_menu: 3, id_alimento: 8, cantidad: 150, unidad_medida: "g" },
+  { id_menu: 3, id_alimento: 9, cantidad: 150, unidad_medida: "g" },
+
+  // Merienda baja en carbohidratos rechazada
+  { id_menu: 4, id_alimento: 10, cantidad: 250, unidad_medida: "ml" },
+  { id_menu: 4, id_alimento: 12, cantidad: 50, unidad_medida: "g" },
+
+  // Almuerzo vegetariano pendiente
+  { id_menu: 5, id_alimento: 1, cantidad: 150, unidad_medida: "g" },
+  { id_menu: 5, id_alimento: 3, cantidad: 150, unidad_medida: "g" },
+  { id_menu: 5, id_alimento: 4, cantidad: 1, unidad_medida: "unidades" },
 ];
 
-// ==================== R13: RECETA PLATO COMPUESTO ====================
+// ============================================================
+// R15. RECETAS DE PLATOS COMPUESTOS
+//
+// Relaciona un alimento compuesto con sus ingredientes.
+// ============================================================
+
 export const recetasPlatosCompuestos = [
-  { id_alimento_compuesto: 2, id_alimento_simple: 1 }, // Pollo con arroz
-  { id_alimento_compuesto: 2, id_alimento_simple: 9 }, // Pollo con brócoli
-  { id_alimento_compuesto: 8, id_alimento_simple: 3 }, // Salmón con ensalada
+  {
+    id_alimento_compuesto: 3,
+    id_alimento_ingrediente: 9,
+    cantidad: 70,
+    unidad_medida: "g",
+  },
+  {
+    id_alimento_compuesto: 3,
+    id_alimento_ingrediente: 6,
+    cantidad: 30,
+    unidad_medida: "g",
+  },
 ];
 
-// ==================== R14: CONSUMO PACIENTE–ALIMENTO ====================
+// ============================================================
+// R16. CONSUMOS DE MENÚS
+// ============================================================
+
 export const consumos = [
-  { id_consumo: 1, id_usuario_paciente: 5, id_alimento: 4,  id_fecha_hora: "2026-03-10T08:15:00", cantidad: 1,   unidad: "unidad" },
-  { id_consumo: 2, id_usuario_paciente: 5, id_alimento: 10, id_fecha_hora: "2026-03-10T08:20:00", cantidad: 200, unidad: "ml" },
-  { id_consumo: 3, id_usuario_paciente: 5, id_alimento: 1,  id_fecha_hora: "2026-03-10T13:00:00", cantidad: 150, unidad: "g" },
-  { id_consumo: 4, id_usuario_paciente: 6, id_alimento: 2,  id_fecha_hora: "2026-03-11T13:30:00", cantidad: 200, unidad: "g" },
-  { id_consumo: 5, id_usuario_paciente: 7, id_alimento: 9,  id_fecha_hora: "2026-03-12T19:00:00", cantidad: 100, unidad: "g" },
-  { id_consumo: 6, id_usuario_paciente: 7, id_alimento: 5,  id_fecha_hora: "2026-03-12T19:15:00", cantidad: 1,   unidad: "unidad" },
+  {
+    id_consumo: 1,
+    id_asignacion: 1,
+    fecha_consumo: "2026-10-04",
+    estado_consumo: "consumido",
+    observaciones: null,
+  },
+  {
+    id_consumo: 2,
+    id_asignacion: 2,
+    fecha_consumo: "2026-10-04",
+    estado_consumo: "consumido",
+    observaciones: "Se consumió la mayor parte del menú.",
+  },
+  {
+    id_consumo: 3,
+    id_asignacion: 3,
+    fecha_consumo: "2026-10-05",
+    estado_consumo: "parcial",
+    observaciones: "No se consumió toda la porción.",
+  },
+  {
+    id_consumo: 4,
+    id_asignacion: 4,
+    fecha_consumo: "2026-10-06",
+    estado_consumo: "pendiente",
+    observaciones: null,
+  },
 ];
 
-// ==================== R2: SOLICITUD (aplanada) ====================
-// estado ∈ {pendiente, atendida}
-// tipo_solicitud ∈ {usuario, revalorizacion, nutricionista}
-export const solicitudes = [
-  { id_solicitud: 1, estado: "pendiente", fecha_solicitud: "2026-03-05", remitente: 2, destinatario: 4, descripcion: "Solicito creación de cuenta para nuevo paciente",    nombre_solicitante: "Luis Gómez",    sala_solicitante: null,    edad_solicitante: null, tipo_solicitud: "usuario" },
-  { id_solicitud: 2, estado: "pendiente", fecha_solicitud: "2026-03-06", remitente: 5, destinatario: 1, descripcion: "Solicito revalorización nutricional con la Dra. Ana", nombre_solicitante: "Carla Ruiz",    sala_solicitante: "Sala A", edad_solicitante: 34,   tipo_solicitud: "revalorizacion" },
-  { id_solicitud: 3, estado: "atendida",  fecha_solicitud: "2026-03-07", remitente: 2, destinatario: 1, descripcion: "Solicito revisión del menú 'Snack tarde'",            nombre_solicitante: "Luis Gómez",    sala_solicitante: null,    edad_solicitante: null, tipo_solicitud: "nutricionista" },
-  { id_solicitud: 4, estado: "pendiente", fecha_solicitud: "2026-03-08", remitente: 6, destinatario: 2, descripcion: "Solicito revalorización por cambio de dieta",         nombre_solicitante: "Miguel Torres", sala_solicitante: "Sala B", edad_solicitante: 45,   tipo_solicitud: "revalorizacion" },
-];
+// ============================================================
+// OBJETO GENERAL DE DATOS SIMULADOS
+// ============================================================
 
-// ==================== Export agrupado ====================
 export const mockData = {
   usuarios,
   solicitudes,
   dietas,
   atiende,
   gruposNutricionales,
-  menus,
   alimentos,
   fichasNutricionales,
+  menus,
   valoraciones,
   menusAsignados,
-  restriccionesGrupoAlimento,
+
+  // Relaciones independientes
+  restriccionesDietaAlimento,
   coberturaDietaGrupo,
+  alimentosGruposNutricionales,
   contenidoMenuAlimento,
   recetasPlatosCompuestos,
+
   consumos,
 };
