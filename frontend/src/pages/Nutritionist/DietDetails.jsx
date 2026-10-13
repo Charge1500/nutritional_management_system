@@ -248,9 +248,7 @@ export const DietDetails = () => {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-200 text-content-muted">
-                  <th className="px-4 py-3 font-medium">
-                    Grupo
-                  </th>
+                  
                   <th className="px-4 py-3 font-medium">
                     Alimento
                   </th>
@@ -269,9 +267,7 @@ export const DietDetails = () => {
                     key={`${restriccion.id_grupo}-${restriccion.id_alimento}`}
                     className="border-b border-gray-100 last:border-0"
                   >
-                    <td className="px-4 py-3 text-content">
-                      {restriccion.grupo?.nombre_grupo ?? "—"}
-                    </td>
+                  
 
                     <td className="px-4 py-3 font-medium text-content">
                       {restriccion.alimento?.nombre_alimento ?? "—"}
