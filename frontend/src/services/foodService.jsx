@@ -3,6 +3,7 @@ import {
   alimentos,
   gruposNutricionales,
   alimentosGruposNutricionales,
+  recetasPlatosCompuestos
 } from "../data/mockData";
 
 // Obtener todos los alimentos registrados.
@@ -44,4 +45,27 @@ export const obtenerGruposDeAlimento = (idAlimento) => {
     .filter(Boolean);
 };
 
+// Obtener los ingredientes de un plato compuesto.
+export const obtenerIngredientesDeAlimento = (idAlimento) => {
+  const relaciones = recetasPlatosCompuestos.filter(
+    (receta) =>
+      receta.id_alimento_compuesto === Number(idAlimento)
+  );
 
+  return relaciones
+    .map((receta) => {
+      const ingrediente = alimentos.find(
+        (alimento) =>
+          alimento.id_alimento === receta.id_alimento_ingrediente
+      );
+
+      if (!ingrediente) return null;
+
+      return {
+        ...ingrediente,
+        cantidad: receta.cantidad,
+        unidad_medida: receta.unidad_medida,
+      };
+    })
+    .filter(Boolean);
+};

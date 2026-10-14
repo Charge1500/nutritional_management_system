@@ -26,6 +26,13 @@ export const FoodCard = ({ food }) => {
       <p className="text-sm text-content-muted">
         ID: {food.id_alimento}
       </p>
+        {/* Indica si el alimento es simple o compuesto. */}
+      <p className="text-sm text-content">
+        Tipo de plato:{" "}
+        <span className="font-medium">
+          {food.tipo_alimento === "compuesto" ? "Compuesto" : "Simple"}
+        </span>
+      </p>
 
       {/* Mostramos el tipo de preparación del alimento. */}
       <p className="text-sm text-content">

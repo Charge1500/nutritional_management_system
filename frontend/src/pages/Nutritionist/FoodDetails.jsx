@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   obtenerAlimentoPorId,
   obtenerGruposDeAlimento,
+  obtenerIngredientesDeAlimento
 } from "../../services/foodService";
 import { obtenerUsuarioPorId } from "../../services/userService";
 import { Card } from "../../components/Card";
@@ -35,12 +36,18 @@ const SectionHeading = ({ title, description }) => (
   </div>
 );
 
+
 // Página de detalles de un alimento.
 export const FoodDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const food = obtenerAlimentoPorId(Number(id));
+  const ingredientes =
+  food.tipo_alimento === "compuesto"
+    ? obtenerIngredientesDeAlimento(food.id_alimento)
+    : [];
+    console.log(typeof(ingredientes))
 
   // Si el alimento no existe, mostramos un mensaje.
   if (!food) {
@@ -88,7 +95,7 @@ export const FoodDetails = () => {
 
   const estadoFormateado = food.estado_alimento
     ? food.estado_alimento.charAt(0).toUpperCase() +
-      food.estado_alimento.slice(1)
+    food.estado_alimento.slice(1)
     : "Sin estado";
 
   return (
@@ -168,8 +175,52 @@ export const FoodDetails = () => {
             label="Fecha de creación"
             value={food.fecha_creacion}
           />
+         <InfoItem
+  label="Tipo de alimento"
+  value={
+    food.tipo_alimento === "compuesto"
+      ? "Compuesto"
+      : "Simple"
+  }
+/>
         </div>
       </Card>
+
+      {/* Ingredientes */}
+      {food.tipo_alimento === "compuesto" && (
+  <Card className="border border-gray-200 shadow-sm">
+    <SectionHeading
+      title="Ingredientes"
+      description="Alimentos que componen este plato y las cantidades utilizadas."
+    />
+
+    {ingredientes.length === 0 ? (
+      <p className="text-sm text-content-muted">
+        No se han registrado ingredientes para este plato.
+      </p>
+    ) : (
+      <div className="space-y-3">
+        {ingredientes.map((ingrediente) => (
+          <div
+        
+            key={ingrediente.id_alimento_ingrediente}
+            className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-4"
+          >
+            <div>
+              <h3 className="font-medium text-content">
+                {ingrediente.nombre_alimento}
+              </h3>
+            </div>
+
+            <span className="shrink-0 font-semibold text-content">
+              {ingrediente.cantidad} {ingrediente.unidad_medida}
+            </span>
+          </div>
+        ))}
+      </div>
+    )}
+  </Card>
+)}
 
       {/* Grupos nutricionales */}
       <Card className="border border-gray-200 shadow-sm">
@@ -233,7 +284,7 @@ export const FoodDetails = () => {
             value={food.fecha_validacion_alimento ?? "Pendiente"}
           />
 
-         
+
         </div>
 
         {food.observaciones_alimento && (
