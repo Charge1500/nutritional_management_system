@@ -160,30 +160,54 @@ export const FoodDetails = () => {
           description="Características principales del alimento registrado."
         />
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <InfoItem
-            label="Tipo de preparación"
-            value={food.tipo_preparacion}
-          />
+<div className="grid grid-cols-2 gap-x-4 gap-y-4 border-t border-gray-100 pt-4">
+  {/* Tipo de alimento */}
+  <div className="min-w-0">
+    <p className="text-xs text-content-muted">
+      Tipo de alimento
+    </p>
 
-          <InfoItem
-            label="Nivel calórico"
-            value={food.nivel_calorico}
-          />
+    <p className="mt-1 text-sm font-medium text-content">
+      {food.tipo_alimento === "compuesto"
+        ? "Compuesto"
+        : "Simple"}
+    </p>
+  </div>
 
-          <InfoItem
-            label="Fecha de creación"
-            value={food.fecha_creacion}
-          />
-         <InfoItem
-  label="Tipo de alimento"
-  value={
-    food.tipo_alimento === "compuesto"
-      ? "Compuesto"
-      : "Simple"
-  }
-/>
-        </div>
+  {/* Tipo de preparación */}
+  <div className="min-w-0">
+    <p className="text-xs text-content-muted">
+      Preparación
+    </p>
+
+    <p className="mt-1 break-words text-sm font-medium text-content">
+      {food.tipo_preparacion || "No especificado"}
+    </p>
+  </div>
+
+  {/* Nivel calórico */}
+  <div className="min-w-0">
+    <p className="text-xs text-content-muted">
+      Nivel calórico
+    </p>
+
+    <p className="mt-1 text-sm font-medium text-content">
+      {food.nivel_calorico || "No especificado"}
+    </p>
+  </div>
+
+  {/* Identificador */}
+  <div className="min-w-0">
+    <p className="text-xs text-content-muted">
+      Identificador
+    </p>
+
+    <p className="mt-1 text-sm font-medium text-content">
+      #{food.id_alimento}
+    </p>
+  </div>
+</div>
+
       </Card>
 
       {/* Ingredientes */}
