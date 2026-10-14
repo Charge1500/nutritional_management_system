@@ -1,9 +1,10 @@
 
 import { useParams, useNavigate } from "react-router-dom";
+
 import {
   obtenerAlimentoPorId,
   obtenerGruposDeAlimento,
-  obtenerIngredientesDeAlimento
+  obtenerIngredientesDeAlimento,
 } from "../../services/foodService";
 
 import { obtenerUsuarioPorId } from "../../services/userService";
@@ -12,8 +13,8 @@ import { Button } from "../../components/Button";
 import { useAuth } from "../../hooks/useAuth";
 
 // Muestra un dato individual con una etiqueta y su valor.
-const InfoItem = ({ label, value, className = "" }) => (
-  <div className={`rounded-xl bg-gray-50 p-4 ${className}`}>
+const InfoItem = ({ label, value }) => (
+  <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
     <p className="text-xs font-medium uppercase tracking-wide text-content-muted">
       {label}
     </p>
@@ -32,11 +33,12 @@ const SectionHeading = ({ title, description }) => (
     </h2>
 
     {description && (
-      <p className="mt-1 text-sm text-content-muted">{description}</p>
+      <p className="mt-1 text-sm leading-6 text-content-muted">
+        {description}
+      </p>
     )}
   </div>
 );
-
 
 // Página de detalles de un alimento.
 export const FoodDetails = () => {
@@ -44,28 +46,19 @@ export const FoodDetails = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Navega al formulario para editar un alimento.
-  const handleEditar = () => {
-    navigate(`/nutricionista/alimentos/nuevo?id=${food.id_alimento}`);
-  };
-
+  // Buscamos el alimento por su identificador.
   const food = obtenerAlimentoPorId(Number(id));
-  const ingredientes =
-    food.tipo_alimento === "compuesto"
-      ? obtenerIngredientesDeAlimento(food.id_alimento)
-      : [];
-  console.log(typeof (ingredientes))
-  const puedeEditar =
-    user &&
-    (user.id_usuario === food.id_usuario_creador ||
-      user.rol === "jefe");
-  // Si el alimento no existe, mostramos un mensaje.
+
+  // Comprobamos primero que el alimento exista.
   if (!food) {
     return (
       <section className="mx-auto max-w-3xl py-8">
         <Card className="border border-gray-200 py-12 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-            <span className="text-2xl font-semibold text-gray-500">
+            <span
+              className="text-2xl font-semibold text-gray-500"
+              aria-hidden="true"
+            >
               !
             </span>
           </div>
@@ -74,12 +67,16 @@ export const FoodDetails = () => {
             Alimento no disponible
           </h1>
 
-          <p className="mt-2 text-sm text-content-muted">
-            No se encontró el alimento solicitado.
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-content-muted">
+            No se encontró el alimento solicitado. Comprueba el
+            identificador o regresa al catálogo.
           </p>
 
           <div className="mt-6">
-            <Button variant="outline" onClick={() => navigate(-1)}>
+            <Button
+              variant="outline"
+              onClick={() => navigate(-1)}
+            >
               Volver
             </Button>
           </div>
@@ -88,8 +85,32 @@ export const FoodDetails = () => {
     );
   }
 
+  // Obtenemos los datos relacionados con el alimento.
   const grupos = obtenerGruposDeAlimento(food.id_alimento);
-  const nutricionista = obtenerUsuarioPorId(food.id_usuario_creador);
+
+  const ingredientes =
+    food.tipo_alimento === "compuesto"
+      ? obtenerIngredientesDeAlimento(food.id_alimento)
+      : [];
+
+  const nutricionista = obtenerUsuarioPorId(
+    food.id_usuario_creador
+  );
+
+  // El creador y el jefe de nutrición pueden editar el alimento.
+  const puedeEditar =
+    Boolean(user) &&
+    (
+      user.id_usuario === food.id_usuario_creador ||
+      user.rol === "jefe"
+    );
+
+  // Navega al formulario en modo edición.
+  const handleEditar = () => {
+    navigate(
+      `/nutricionista/alimentos/nuevo?id=${food.id_alimento}`
+    );
+  };
 
   // Colores según el estado de aprobación.
   const estilosEstado = {
@@ -97,6 +118,7 @@ export const FoodDetails = () => {
     pendiente: "bg-amber-100 text-amber-800 ring-amber-200",
     rechazado: "bg-red-100 text-red-800 ring-red-200",
     borrador: "bg-gray-100 text-gray-700 ring-gray-200",
+    guardado: "bg-green-100 text-green-800 ring-green-200",
   };
 
   const estiloEstado =
@@ -105,13 +127,24 @@ export const FoodDetails = () => {
 
   const estadoFormateado = food.estado_alimento
     ? food.estado_alimento.charAt(0).toUpperCase() +
-    food.estado_alimento.slice(1)
+      food.estado_alimento.slice(1)
     : "Sin estado";
 
+  // Evitamos mostrar valores vacíos en la información general.
+  const tipoAlimento =
+    food.tipo_alimento === "compuesto" ? "Compuesto" : "Simple";
+
+  const nombreNutricionista = [
+    nutricionista?.nombre,
+    nutricionista?.apellidos,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <section className="mx-auto max-w-7xl space-y-7 pb-8">
-      {/* Navegación */}
-      <div>
+    <section className="mx-auto max-w-7xl space-y-6 pb-8">
+      {/* Navegación y acción principal */}
+      <div className="flex items-center justify-between gap-4">
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
@@ -120,23 +153,24 @@ export const FoodDetails = () => {
           <span aria-hidden="true">←</span>
           Volver a alimentos
         </Button>
+
+        {puedeEditar && (
+          <Button variant="health" onClick={handleEditar}>
+            Editar alimento
+          </Button>
+        )}
       </div>
 
-      {puedeEditar && (
-        <Button onClick={handleEditar}>
-          Editar alimento
-        </Button>
-      )}
       {/* Encabezado principal */}
       <header className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-health-500">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-health-600">
               Catálogo de alimentos / Detalles
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-content sm:text-3xl">
+              <h1 className="break-words text-2xl font-bold tracking-tight text-health-700 sm:text-3xl">
                 {food.nombre_alimento}
               </h1>
 
@@ -150,12 +184,18 @@ export const FoodDetails = () => {
                 {estadoFormateado}
               </span>
             </div>
+
+            <p className="text-sm leading-6 text-content-muted">
+              Consulta las características, los grupos nutricionales
+              y la información de validación de este alimento.
+            </p>
           </div>
 
-          <div className="shrink-0 rounded-xl bg-gray-50 px-5 py-4 sm:min-w-32">
+          <div className="shrink-0 rounded-xl border border-gray-100 bg-gray-50 px-5 py-4 sm:min-w-32">
             <p className="text-xs font-medium text-content-muted">
               Identificador
             </p>
+
             <p className="mt-1 text-2xl font-bold text-content">
               #{food.id_alimento}
             </p>
@@ -170,57 +210,30 @@ export const FoodDetails = () => {
           description="Características principales del alimento registrado."
         />
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-4 border-t border-gray-100 pt-4">
-          {/* Tipo de alimento */}
-          <div className="min-w-0">
-            <p className="text-xs text-content-muted">
-              Tipo de alimento
-            </p>
+        <div className="grid grid-cols-1 gap-4 border-t border-gray-100 pt-5 sm:grid-cols-2 lg:grid-cols-4">
+          <InfoItem
+            label="Tipo de alimento"
+            value={tipoAlimento}
+          />
 
-            <p className="mt-1 text-sm font-medium text-content">
-              {food.tipo_alimento === "compuesto"
-                ? "Compuesto"
-                : "Simple"}
-            </p>
-          </div>
+          <InfoItem
+            label="Preparación"
+            value={food.tipo_preparacion || "No especificada"}
+          />
 
-          {/* Tipo de preparación */}
-          <div className="min-w-0">
-            <p className="text-xs text-content-muted">
-              Preparación
-            </p>
+          <InfoItem
+            label="Nivel calórico"
+            value={food.nivel_calorico || "No especificado"}
+          />
 
-            <p className="mt-1 break-words text-sm font-medium text-content">
-              {food.tipo_preparacion || "No especificado"}
-            </p>
-          </div>
-
-          {/* Nivel calórico */}
-          <div className="min-w-0">
-            <p className="text-xs text-content-muted">
-              Nivel calórico
-            </p>
-
-            <p className="mt-1 text-sm font-medium text-content">
-              {food.nivel_calorico || "No especificado"}
-            </p>
-          </div>
-
-          {/* Identificador */}
-          <div className="min-w-0">
-            <p className="text-xs text-content-muted">
-              Identificador
-            </p>
-
-            <p className="mt-1 text-sm font-medium text-content">
-              #{food.id_alimento}
-            </p>
-          </div>
+          <InfoItem
+            label="Identificador"
+            value={`#${food.id_alimento}`}
+          />
         </div>
-
       </Card>
 
-      {/* Ingredientes */}
+      {/* Ingredientes de los alimentos compuestos */}
       {food.tipo_alimento === "compuesto" && (
         <Card className="border border-gray-200 shadow-sm">
           <SectionHeading
@@ -229,24 +242,37 @@ export const FoodDetails = () => {
           />
 
           {ingredientes.length === 0 ? (
-            <p className="text-sm text-content-muted">
-              No se han registrado ingredientes para este plato.
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {ingredientes.map((ingrediente) => (
-                <div
+            <div className="rounded-xl border border-dashed border-gray-300 px-5 py-8 text-center">
+              <p className="font-medium text-content">
+                Sin ingredientes registrados
+              </p>
 
+              <p className="mt-1 text-sm text-content-muted">
+                Todavía no se han asociado ingredientes a este plato.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-gray-200">
+              {ingredientes.map((ingrediente, index) => (
+                <div
                   key={ingrediente.id_alimento_ingrediente}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-4"
+                  className={`flex items-center justify-between gap-4 p-4 ${
+                    index !== ingredientes.length - 1
+                      ? "border-b border-gray-100"
+                      : ""
+                  }`}
                 >
-                  <div>
-                    <h3 className="font-medium text-content">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-50 text-health-700">
+                      <span aria-hidden="true">◈</span>
+                    </div>
+
+                    <h3 className="break-words font-medium text-content">
                       {ingrediente.nombre_alimento}
                     </h3>
                   </div>
 
-                  <span className="shrink-0 font-semibold text-content">
+                  <span className="shrink-0 rounded-lg bg-gray-50 px-3 py-2 text-sm font-semibold text-content">
                     {ingrediente.cantidad} {ingrediente.unidad_medida}
                   </span>
                 </div>
@@ -268,6 +294,7 @@ export const FoodDetails = () => {
             <p className="font-medium text-content">
               Sin grupos nutricionales
             </p>
+
             <p className="mt-1 text-sm text-content-muted">
               Todavía no hay grupos asociados a este alimento.
             </p>
@@ -279,7 +306,7 @@ export const FoodDetails = () => {
                 key={grupo.id_grupo}
                 className="rounded-xl border border-gray-200 p-5 transition-colors hover:border-health-500"
               >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 text-health-500">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 text-health-700">
                   <span className="text-lg" aria-hidden="true">
                     ◈
                   </span>
@@ -298,14 +325,14 @@ export const FoodDetails = () => {
         )}
       </Card>
 
-      {/* Validación */}
+      {/* Validación del alimento */}
       <Card className="border border-gray-200 shadow-sm">
         <SectionHeading
           title="Validación del alimento"
           description="Estado de la revisión realizada por el jefe de nutrición."
         />
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 border-t border-gray-100 pt-5 sm:grid-cols-2 lg:grid-cols-3">
           <InfoItem
             label="Estado actual"
             value={estadoFormateado}
@@ -327,8 +354,11 @@ export const FoodDetails = () => {
           {food.observaciones?.trim() ? (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
-                  <span className="text-lg font-bold" aria-hidden="true">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-800">
+                  <span
+                    className="text-lg font-bold"
+                    aria-hidden="true"
+                  >
                     !
                   </span>
                 </div>
@@ -361,8 +391,8 @@ export const FoodDetails = () => {
           description="Información sobre el profesional que creó el registro."
         />
 
-        <div className="flex items-center gap-4 rounded-xl bg-gray-50 p-5">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 font-bold text-health-500">
+        <div className="flex items-center gap-4 rounded-xl border border-gray-100 bg-gray-50 p-5">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 font-bold text-health-700">
             {nutricionista?.nombre?.charAt(0)?.toUpperCase() ?? "N"}
           </div>
 
@@ -371,12 +401,12 @@ export const FoodDetails = () => {
               Nutricionista creador
             </p>
 
-            <p className="mt-1 font-semibold text-content">
-              {nutricionista.nombre} {nutricionista.apellidos}
+            <p className="mt-1 break-words font-semibold text-content">
+              {nombreNutricionista || "Usuario no disponible"}
             </p>
 
             <p className="mt-1 text-sm text-content-muted">
-              ID de usuario: {food.id_usuario_creador}
+              ID de usuario: {food.id_usuario_creador ?? "—"}
             </p>
           </div>
         </div>
