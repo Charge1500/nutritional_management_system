@@ -20,7 +20,7 @@ export const DietDetails = () => {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
-   const crearMenu = () => {
+  const crearMenu = () => {
     navigate(`/nutricionista/menus/nuevo`);
   };
 
@@ -102,36 +102,22 @@ export const DietDetails = () => {
   return (
     <section className="mx-auto max-w-7xl space-y-8">
 
-      
 
-       
 
-{/* Navegación y acción principal */}
-<div className="flex items-center justify-between gap-4">
-  <Button
-    variant="ghost"
-    onClick={() => navigate(-1)}
-    className="gap-2 px-3 py-2"
-  >
-    <span aria-hidden="true">←</span>
-    Volver
-  </Button>
 
-  {user?.rol === ROLES.NUTRICIONISTA && (
-    <Button
-      variant="health"
-      onClick={crearMenu}
-      className="gap-2"
-    >
-      <span aria-hidden="true">+</span>
-      Generar menú
-    </Button>
-  )}
-</div>
 
-    
+      {/* Navegación y acción principal */}
+      <div className="flex items-center justify-between gap-4">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="gap-2 px-3 py-2"
+        >
+          <span aria-hidden="true">←</span>
+          Volver
+        </Button>
 
-    
+      </div>
 
       {/* Encabezado */}
       <header className="space-y-3">
@@ -145,11 +131,10 @@ export const DietDetails = () => {
           </h1>
 
           <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
-              dieta.estado_dieta === "guardado"
+            className={`rounded-full px-3 py-1 text-xs font-medium ${dieta.estado_dieta === "guardado"
                 ? "bg-green-100 text-green-700"
                 : "bg-slate-100 text-slate-700"
-            }`}
+              }`}
           >
             {dieta.estado_dieta === "guardado"
               ? "Guardado"
@@ -207,7 +192,7 @@ export const DietDetails = () => {
             </p>
             <p className="mt-1 font-medium text-content">
               {dieta.calorias_minimas != null &&
-              dieta.calorias_maximas != null
+                dieta.calorias_maximas != null
                 ? `${dieta.calorias_minimas}–${dieta.calorias_maximas} kcal`
                 : "No especificado"}
             </p>
@@ -270,7 +255,7 @@ export const DietDetails = () => {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-200 text-content-muted">
-                  
+
                   <th className="px-4 py-3 font-medium">
                     Alimento
                   </th>
@@ -289,7 +274,7 @@ export const DietDetails = () => {
                     key={`${restriccion.id_grupo}-${restriccion.id_alimento}`}
                     className="border-b border-gray-100 last:border-0"
                   >
-                  
+
 
                     <td className="px-4 py-3 font-medium text-content">
                       {restriccion.alimento?.nombre_alimento ?? "—"}
@@ -312,6 +297,59 @@ export const DietDetails = () => {
         )}
       </Card>
 
+        {/* Crear menú a partir de la dieta */}
+{user?.rol === ROLES.NUTRICIONISTA && (
+  <Card className="overflow-hidden border border-health-100 bg-gradient-to-br from-health-50/70 to-white shadow-sm">
+    <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-health-600 shadow-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            className="h-6 w-6"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8 4h8m-9 4h10m-10 4h10m-10 4h6M5 2h14a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z"
+            />
+          </svg>
+        </div>
+
+        <div className="max-w-2xl">
+          <h2 className="text-lg font-bold text-content">
+            Diseña un menú para esta dieta
+          </h2>
+
+          <p className="mt-2 text-sm leading-6 text-content-muted">
+            Utiliza los requisitos nutricionales, los grupos alimentarios
+            y las restricciones definidos en esta dieta para crear una
+            propuesta de menú adaptada a sus necesidades.
+          </p>
+        </div>
+      </div>
+
+      <div className="shrink-0">
+        <Button
+          variant="health"
+          onClick={() =>
+            navigate(
+              `/nutricionista/menus/nuevo?id_dieta=${dieta.id_dieta}`
+            )
+          }
+          className="w-full gap-2 sm:w-auto"
+        >
+          Diseñar menú
+          <span aria-hidden="true">→</span>
+        </Button>
+      </div>
+    </div>
+  </Card>
+)}
 
     </section>
   );
