@@ -1,14 +1,15 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-
 import {
   obtenerAlimentoPorId,
   obtenerGruposDeAlimento,
   obtenerIngredientesDeAlimento
 } from "../../services/foodService";
+
 import { obtenerUsuarioPorId } from "../../services/userService";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
+import { useAuth } from "../../hooks/useAuth";
 
 // Muestra un dato individual con una etiqueta y su valor.
 const InfoItem = ({ label, value, className = "" }) => (
@@ -41,14 +42,23 @@ const SectionHeading = ({ title, description }) => (
 export const FoodDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Navega al formulario para editar un alimento.
+  const handleEditar = () => {
+    navigate(`/nutricionista/alimentos/nuevo?id=${food.id_alimento}`);
+  };
 
   const food = obtenerAlimentoPorId(Number(id));
   const ingredientes =
-  food.tipo_alimento === "compuesto"
-    ? obtenerIngredientesDeAlimento(food.id_alimento)
-    : [];
-    console.log(typeof(ingredientes))
-
+    food.tipo_alimento === "compuesto"
+      ? obtenerIngredientesDeAlimento(food.id_alimento)
+      : [];
+  console.log(typeof (ingredientes))
+  const puedeEditar =
+    user &&
+    (user.id_usuario === food.id_usuario_creador ||
+      user.rol === "jefe");
   // Si el alimento no existe, mostramos un mensaje.
   if (!food) {
     return (
@@ -112,6 +122,11 @@ export const FoodDetails = () => {
         </Button>
       </div>
 
+      {puedeEditar && (
+        <Button onClick={handleEditar}>
+          Editar alimento
+        </Button>
+      )}
       {/* Encabezado principal */}
       <header className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -135,11 +150,6 @@ export const FoodDetails = () => {
                 {estadoFormateado}
               </span>
             </div>
-
-            <p className="max-w-2xl text-sm leading-6 text-content-muted">
-              Consulta las características nutricionales, los grupos
-              asociados y la información de validación de este alimento.
-            </p>
           </div>
 
           <div className="shrink-0 rounded-xl bg-gray-50 px-5 py-4 sm:min-w-32">
@@ -160,91 +170,91 @@ export const FoodDetails = () => {
           description="Características principales del alimento registrado."
         />
 
-<div className="grid grid-cols-2 gap-x-4 gap-y-4 border-t border-gray-100 pt-4">
-  {/* Tipo de alimento */}
-  <div className="min-w-0">
-    <p className="text-xs text-content-muted">
-      Tipo de alimento
-    </p>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-4 border-t border-gray-100 pt-4">
+          {/* Tipo de alimento */}
+          <div className="min-w-0">
+            <p className="text-xs text-content-muted">
+              Tipo de alimento
+            </p>
 
-    <p className="mt-1 text-sm font-medium text-content">
-      {food.tipo_alimento === "compuesto"
-        ? "Compuesto"
-        : "Simple"}
-    </p>
-  </div>
+            <p className="mt-1 text-sm font-medium text-content">
+              {food.tipo_alimento === "compuesto"
+                ? "Compuesto"
+                : "Simple"}
+            </p>
+          </div>
 
-  {/* Tipo de preparación */}
-  <div className="min-w-0">
-    <p className="text-xs text-content-muted">
-      Preparación
-    </p>
+          {/* Tipo de preparación */}
+          <div className="min-w-0">
+            <p className="text-xs text-content-muted">
+              Preparación
+            </p>
 
-    <p className="mt-1 break-words text-sm font-medium text-content">
-      {food.tipo_preparacion || "No especificado"}
-    </p>
-  </div>
+            <p className="mt-1 break-words text-sm font-medium text-content">
+              {food.tipo_preparacion || "No especificado"}
+            </p>
+          </div>
 
-  {/* Nivel calórico */}
-  <div className="min-w-0">
-    <p className="text-xs text-content-muted">
-      Nivel calórico
-    </p>
+          {/* Nivel calórico */}
+          <div className="min-w-0">
+            <p className="text-xs text-content-muted">
+              Nivel calórico
+            </p>
 
-    <p className="mt-1 text-sm font-medium text-content">
-      {food.nivel_calorico || "No especificado"}
-    </p>
-  </div>
+            <p className="mt-1 text-sm font-medium text-content">
+              {food.nivel_calorico || "No especificado"}
+            </p>
+          </div>
 
-  {/* Identificador */}
-  <div className="min-w-0">
-    <p className="text-xs text-content-muted">
-      Identificador
-    </p>
+          {/* Identificador */}
+          <div className="min-w-0">
+            <p className="text-xs text-content-muted">
+              Identificador
+            </p>
 
-    <p className="mt-1 text-sm font-medium text-content">
-      #{food.id_alimento}
-    </p>
-  </div>
-</div>
+            <p className="mt-1 text-sm font-medium text-content">
+              #{food.id_alimento}
+            </p>
+          </div>
+        </div>
 
       </Card>
 
       {/* Ingredientes */}
       {food.tipo_alimento === "compuesto" && (
-  <Card className="border border-gray-200 shadow-sm">
-    <SectionHeading
-      title="Ingredientes"
-      description="Alimentos que componen este plato y las cantidades utilizadas."
-    />
+        <Card className="border border-gray-200 shadow-sm">
+          <SectionHeading
+            title="Ingredientes"
+            description="Alimentos que componen este plato y las cantidades utilizadas."
+          />
 
-    {ingredientes.length === 0 ? (
-      <p className="text-sm text-content-muted">
-        No se han registrado ingredientes para este plato.
-      </p>
-    ) : (
-      <div className="space-y-3">
-        {ingredientes.map((ingrediente) => (
-          <div
-        
-            key={ingrediente.id_alimento_ingrediente}
-            className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-4"
-          >
-            <div>
-              <h3 className="font-medium text-content">
-                {ingrediente.nombre_alimento}
-              </h3>
+          {ingredientes.length === 0 ? (
+            <p className="text-sm text-content-muted">
+              No se han registrado ingredientes para este plato.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {ingredientes.map((ingrediente) => (
+                <div
+
+                  key={ingrediente.id_alimento_ingrediente}
+                  className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-4"
+                >
+                  <div>
+                    <h3 className="font-medium text-content">
+                      {ingrediente.nombre_alimento}
+                    </h3>
+                  </div>
+
+                  <span className="shrink-0 font-semibold text-content">
+                    {ingrediente.cantidad} {ingrediente.unidad_medida}
+                  </span>
+                </div>
+              ))}
             </div>
-
-            <span className="shrink-0 font-semibold text-content">
-              {ingrediente.cantidad} {ingrediente.unidad_medida}
-            </span>
-          </div>
-        ))}
-      </div>
-    )}
-  </Card>
-)}
+          )}
+        </Card>
+      )}
 
       {/* Grupos nutricionales */}
       <Card className="border border-gray-200 shadow-sm">
@@ -296,7 +306,10 @@ export const FoodDetails = () => {
         />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <InfoItem label="Estado actual" value={estadoFormateado} />
+          <InfoItem
+            label="Estado actual"
+            value={estadoFormateado}
+          />
 
           <InfoItem
             label="Resultado de validación"
@@ -307,23 +320,38 @@ export const FoodDetails = () => {
             label="Fecha de validación"
             value={food.fecha_validacion_alimento ?? "Pendiente"}
           />
-
-
         </div>
 
-        {food.observaciones_alimento && (
-          <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-5">
-            <div className="flex items-start gap-3">
-              <span
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 font-bold text-red-700"
-                aria-hidden="true"
-              >
-                !
-              </span>
+        {/* Observaciones del jefe de nutrición */}
+        <div className="mt-5">
+          {food.observaciones?.trim() ? (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                  <span className="text-lg font-bold" aria-hidden="true">
+                    !
+                  </span>
+                </div>
 
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold text-amber-900">
+                    Observaciones del jefe de nutrición
+                  </h3>
+
+                  <p className="mt-2 whitespace-pre-line break-words text-sm leading-6 text-amber-900">
+                    {food.observaciones}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="rounded-xl border border-dashed border-gray-200 p-4">
+              <p className="text-sm text-content-muted">
+                No hay observaciones registradas para este alimento.
+              </p>
+            </div>
+          )}
+        </div>
       </Card>
 
       {/* Registro y autoría */}
@@ -344,7 +372,7 @@ export const FoodDetails = () => {
             </p>
 
             <p className="mt-1 font-semibold text-content">
-              {nutricionista?.nombre ?? "Usuario no disponible"}
+              {nutricionista.nombre} {nutricionista.apellidos}
             </p>
 
             <p className="mt-1 text-sm text-content-muted">
