@@ -20,6 +20,9 @@ export const DietDetails = () => {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
+   const crearMenu = () => {
+    navigate(`/nutricionista/menus/nuevo`);
+  };
 
   // Temporalmente utilizamos el usuario de prueba.
   const usuarioActual = obtenerUsuarioPorId(user.id_usuario);
@@ -99,17 +102,36 @@ export const DietDetails = () => {
   return (
     <section className="mx-auto max-w-7xl space-y-8">
 
-         {/* Volver */}
-    <div>
-      <Button
-        variant="ghost"
-        onClick={() => navigate(-1)}
-        className="gap-2 px-3 py-2"
-      >
-        <span aria-hidden="true">←</span>
-        Volver
-      </Button>
-    </div>
+      
+
+       
+
+{/* Navegación y acción principal */}
+<div className="flex items-center justify-between gap-4">
+  <Button
+    variant="ghost"
+    onClick={() => navigate(-1)}
+    className="gap-2 px-3 py-2"
+  >
+    <span aria-hidden="true">←</span>
+    Volver
+  </Button>
+
+  {user?.rol === ROLES.NUTRICIONISTA && (
+    <Button
+      variant="health"
+      onClick={crearMenu}
+      className="gap-2"
+    >
+      <span aria-hidden="true">+</span>
+      Generar menú
+    </Button>
+  )}
+</div>
+
+    
+
+    
 
       {/* Encabezado */}
       <header className="space-y-3">
