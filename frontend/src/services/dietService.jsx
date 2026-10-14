@@ -35,6 +35,7 @@ export const obtenerDietasAutorizadas = (idUsuario) => {
 };
 
 
+
 /**
  * Obtiene los grupos nutricionales que debe cubrir una dieta.
  */
@@ -44,15 +45,17 @@ export const obtenerGruposDeDieta = (idDieta) => {
     (relacion) => relacion.id_dieta === Number(idDieta)
   );
 
-  // Obtenemos los datos completos de cada grupo.
+  // Obtenemos los datos completos de cada grupo nutricional.
   return relaciones
     .map((relacion) =>
       gruposNutricionales.find(
-        (grupo) => grupo.id_grupo === relacion.id_grupo
+        (grupo) =>
+          grupo.id_grupo_nutricional === relacion.id_grupo_nutricional
       )
     )
     .filter(Boolean);
 };
+
 
 export const obtenerRestriccionesDeDieta = (idDieta) => {
   return restriccionesDietaAlimento

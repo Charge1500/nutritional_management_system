@@ -9,6 +9,7 @@ import { NutritionistFood } from '../pages/Nutritionist/NutritionistFood';
 import { FoodDetails } from '../pages/Nutritionist/FoodDetails';
 import { FoodForm } from '../pages/Nutritionist/FoodForm';
 import { NutritionistMenu } from '../pages/Nutritionist/NutritionistMenu';
+import { MenuDetails } from '../pages/Nutritionist/MenuDetails';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -46,7 +47,7 @@ export function AppRoutes() {
           <Route path="/nutricionista/ficha-nutricional" element={<Placeholder title="Fichas Nutricionales" />} />
           <Route path="/nutricionista/menus" element={<NutritionistMenu />} />
           <Route path="/nutricionista/menus/nuevo" element={<Placeholder title="Crear Menú" />} />
-           <Route path="/nutricionista/menus/:id" element={<Placeholder />} />
+           <Route path="/nutricionista/menus/:id" element={<MenuDetails />} />
           <Route path="/nutricionista/valoraciones" element={<Placeholder title="Gestión de Valoraciones" />} />
           <Route path="/nutricionista/solicitudes" element={<Placeholder title="Solicitudes de Pacientes" />} />
           <Route path="/nutricionista/dietas/:id"element={<DietDetails/>}/>

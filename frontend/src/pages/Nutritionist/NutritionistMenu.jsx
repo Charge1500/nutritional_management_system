@@ -9,8 +9,8 @@ export const NutritionistMenu = () => {
   const menus = obtenerMenus();
 
   const navigate = useNavigate();
-   const registrarMenu = () => {
-    navigate(`/nutricionista/menu/nuevo`);
+   const crearMenu = () => {
+    navigate(`/nutricionista/menus/nuevo`);
   };
 
   return (
@@ -26,9 +26,9 @@ export const NutritionistMenu = () => {
 
         <Button
           variant="food"
-          onClick={ registrarMenu}
+          onClick={ crearMenu}
         >
-          + Registrar alimento
+          + Generar Menu
         </Button>
       </div>
 
