@@ -51,7 +51,7 @@ export const NutritionistHome = () => {
 
           {/* Mostramos la especialidad del nutricionista. */}
           <p className="mt-2 text-sm text-content-muted sm:text-base">
-            {usuarioActual.especialidad}
+            Especialidad: {usuarioActual.especialidad}
           </p>
         </div>
       </header>
