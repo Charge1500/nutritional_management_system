@@ -5,6 +5,11 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { ROLES } from '../data/roles';
 import { NutritionistHome } from '../pages/Nutritionist/NutritionistHome';
 import { DietDetails } from '../pages/Nutritionist/DietDetails';
+import { NutritionistFood } from '../pages/Nutritionist/NutritionistFood';
+import { FoodDetails } from '../pages/Nutritionist/FoodDetails';
+import { FoodForm } from '../pages/Nutritionist/FoodForm';
+import { NutritionistMenu } from '../pages/Nutritionist/NutritionistMenu';
+import { MenuDetails } from '../pages/Nutritionist/MenuDetails';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -37,14 +42,16 @@ export function AppRoutes() {
         {/*Rutas exclusivas para Nutricionistas y Jefe de Nutrición*/}
         <Route element={<ProtectedRoute allowedRoles={[ROLES.NUTRICIONISTA, ROLES.JEFE]} />}>
           <Route path="/nutricionista" element={<NutritionistHome/>} />
-          <Route path="/nutricionista/alimentos" element={<Placeholder title="Gestión de Alimentos" />} />
-          <Route path="/nutricionista/alimentos/nuevo" element={<Placeholder title="Crear Alimento" />} />
+          <Route path="/nutricionista/alimentos" element={<NutritionistFood />} />
+          <Route path="/nutricionista/alimentos/nuevo" element={<FoodForm/>} />
           <Route path="/nutricionista/ficha-nutricional" element={<Placeholder title="Fichas Nutricionales" />} />
-          <Route path="/nutricionista/menus" element={<Placeholder title="Gestión de Menús" />} />
+          <Route path="/nutricionista/menus" element={<NutritionistMenu />} />
           <Route path="/nutricionista/menus/nuevo" element={<Placeholder title="Crear Menú" />} />
+           <Route path="/nutricionista/menus/:id" element={<MenuDetails />} />
           <Route path="/nutricionista/valoraciones" element={<Placeholder title="Gestión de Valoraciones" />} />
           <Route path="/nutricionista/solicitudes" element={<Placeholder title="Solicitudes de Pacientes" />} />
           <Route path="/nutricionista/dietas/:id"element={<DietDetails/>}/>
+          <Route path="/nutricionista/alimentos/:id"element={<FoodDetails/>}/>
         </Route>
 
         {/*Rutas exclusivas para Jefe de Nutrición*/}

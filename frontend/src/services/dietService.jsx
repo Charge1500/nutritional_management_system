@@ -3,8 +3,8 @@ import {
   atiende,
   gruposNutricionales,
   coberturaDietaGrupo,
-  restriccionesGrupoAlimento,
   alimentos,
+  restriccionesDietaAlimento
 } from "../data/mockData";
 
 
@@ -35,6 +35,7 @@ export const obtenerDietasAutorizadas = (idUsuario) => {
 };
 
 
+
 /**
  * Obtiene los grupos nutricionales que debe cubrir una dieta.
  */
@@ -44,41 +45,35 @@ export const obtenerGruposDeDieta = (idDieta) => {
     (relacion) => relacion.id_dieta === Number(idDieta)
   );
 
-  // Obtenemos los datos completos de cada grupo.
+  // Obtenemos los datos completos de cada grupo nutricional.
   return relaciones
     .map((relacion) =>
       gruposNutricionales.find(
-        (grupo) => grupo.id_grupo === relacion.id_grupo
+        (grupo) =>
+          grupo.id_grupo_nutricional === relacion.id_grupo_nutricional
       )
     )
     .filter(Boolean);
 };
 
-/**
- * Obtiene las restricciones asociadas a los grupos
- * nutricionales que cubre una dieta.
- */
+
 export const obtenerRestriccionesDeDieta = (idDieta) => {
-  // Primero obtenemos los grupos cubiertos por la dieta.
-  const grupos = obtenerGruposDeDieta(idDieta);
-
-  // Guardamos sus identificadores.
-  const idsGrupos = grupos.map((grupo) => grupo.id_grupo);
-
-  // Buscamos las restricciones que pertenecen a esos grupos.
-  return restriccionesGrupoAlimento
-    .filter((restriccion) =>
-      idsGrupos.includes(restriccion.id_grupo)
+  return restriccionesDietaAlimento
+    .filter(
+      (restriccion) =>
+        restriccion.id_dieta === Number(idDieta)
     )
-    .map((restriccion) => ({
-      ...restriccion,
-      grupo: grupos.find(
-        (grupo) => grupo.id_grupo === restriccion.id_grupo
-      ),
-      alimento: alimentos.find(
+    .map((restriccion) => {
+      const alimento = alimentos.find(
         (alimento) =>
           alimento.id_alimento === restriccion.id_alimento
-      ),
-    }));
+      );
+
+      return {
+        ...restriccion,
+        alimento,
+      };
+    })
+    .filter((restriccion) => restriccion.alimento);
 };
 
