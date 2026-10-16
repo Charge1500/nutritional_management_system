@@ -5,6 +5,8 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { ROLES } from '../data/roles';
 import { NutritionistHome } from '../pages/Nutritionist/NutritionistHome';
 import { DietDetails } from '../pages/Nutritionist/DietDetails';
+import { PatientHome } from '../pages/Patient/PatientHome';
+
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -27,7 +29,7 @@ export function AppRoutes() {
 
         {/*Rutas exclusivas para Pacientes*/}
         <Route element={<ProtectedRoute allowedRoles={[ROLES.PACIENTE]} />}>
-          <Route path="/paciente" element={<Placeholder title="Dashboard Paciente" />} />
+          <Route path="/paciente" element={<PatientHome />} />
           <Route path="/paciente/menus" element={<Placeholder title="Mis Menús" />} />
           <Route path="/paciente/consumo" element={<Placeholder title="Registrar Consumo" />} />
           <Route path="/paciente/revaloracion" element={<Placeholder title="Solicitar Revaloración" />} />
