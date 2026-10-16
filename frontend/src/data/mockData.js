@@ -1045,6 +1045,7 @@ export const mockData = {
   alimentosGruposNutricionales,
   contenidoMenuAlimento,
   recetasPlatosCompuestos,
+
   consumos,
   inscripcionesPacienteDieta
 };

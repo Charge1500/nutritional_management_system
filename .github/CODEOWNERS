@@ -1,0 +1,5 @@
+# .github/CODEOWNERS
+* @Charge1500 @Edo-06 @MenwaLab
+/backend/ @Charge1500 @Edo-06
+/frontend/ @MenwaLab @tamarit06 @Ascenso-cloud
+/frontend/src/tests/ @MenwaLab
