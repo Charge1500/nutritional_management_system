@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Pregunta4DIP.Core/Pregunta4DIP.Core.csproj" />
+    <Project Path="src/Pregunta4DIP.Infrastructure/Pregunta4DIP.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Pregunta4DIP.Tests/Pregunta4DIP.Tests.csproj" />
+  </Folder>
+</Solution>
