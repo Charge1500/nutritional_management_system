@@ -11,7 +11,9 @@ export function useReportData(fetchReport) {
   const requestIdRef = useRef(0); // número de la última petición lanzada
 
   const load = useCallback(async (param) => {
-    requestIdRef.current += 1; // cada petición nueva invalida las anteriores
+    requestIdRef.current += 1; 
+    // con requestIdRef cada petición nueva invalida las anteriores: si el usuario cambia rápidamente de selección,
+    // una respuesta lenta para la selección anterior podría sobreescribir la nueva.
     const requestId = requestIdRef.current;
     setRows([]); // limpia la tabla anterior
     setError(''); // limpia el error anterior
