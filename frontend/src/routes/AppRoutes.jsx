@@ -11,6 +11,10 @@ import { FoodForm } from '../pages/Nutritionist/FoodForm';
 import { NutritionistMenu } from '../pages/Nutritionist/NutritionistMenu';
 import { MenuDetails } from '../pages/Nutritionist/MenuDetails';
 
+import { ReportsHome } from '../pages/Reports/ReportsHome';
+import { ReportMenusByDiet } from '../pages/Reports/ReportMenusByDiet';
+import { ReportValidatedMenus } from '../pages/Reports/ReportValidatedMenus';
+
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
   <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -73,7 +77,9 @@ export function AppRoutes() {
 
         {/* Ruta compartida por varios roles */}
         <Route element={<ProtectedRoute allowedRoles={[ROLES.NUTRICIONISTA, ROLES.JEFE, ROLES.ADMIN]} />}>
-          <Route path="/reportes" element={<Placeholder title="Reportes del Sistema" />} />
+          <Route path="/reportes" element={<ReportsHome />} />
+          <Route path="/reportes/menus-por-dieta" element={<ReportMenusByDiet />} />
+          <Route path="/reportes/menus-validados" element={<ReportValidatedMenus />} />
         </Route>
 
       </Route>
