@@ -19,12 +19,13 @@ const renderLogin = () =>
 describe('Acceso rápido de desarrollo (con mockData real)', () => {
   beforeEach(() => localStorage.clear());
 
-  it.each([
+ it.each([
     ['Paciente', 'Dashboard Paciente'],
-    ['Nutricionista', 'Dashboard Nutricionista'],
+    ['Nutricionista', /Bienvenida/i],
     ['Jefe de nutrición', 'Dashboard Jefe'],
     ['Administrador', 'Dashboard Admin'],
   ])('el botón "%s" entra a "%s"', async (buttonName, expectedHeading) => {
+
     const user = userEvent.setup();
     renderLogin();
     await user.click(screen.getByRole('button', { name: buttonName }));

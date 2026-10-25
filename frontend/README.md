@@ -12,6 +12,7 @@ Below is the list of the installed libraries and their specific purpose for this
 - recharts: Added to render responsive and interactive charts for the analytical reports required by the system.
 
 - jspdf & html2canvas: Integrated to fulfill the requirement of exporting tables, reports, and menus to PDF format directly from the browser.
+- jspdf-autotable: generates vectorial pdf documents structured with real tables, repeats the header on every page, paginates correctly and has clean text selection. Works together with jspdf.
 
 - i18next & react-i18next: Configured to support multi-language capabilities, ensuring the application is adaptable to different users.
 
