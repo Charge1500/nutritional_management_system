@@ -1,4 +1,4 @@
-import { reportDiets, reportReviewers, generatedMenus } from '../data/reportMockData';
+import { dietas, usuarios, menus } from '../data/mockData';
 
 const SIMULATED_LATENCY_MS = 250; // retardo artificial para probar el estado "cargando"
 
@@ -16,10 +16,41 @@ const assertValidId = (id, label) => {
   }
 };
 
-// Al conectar el back end, cada función se reemplaza por una llamada axios, ej:
-//  const { data } = await axios.get('/reports/menus-by-diet', { params: { diet_id: dietId } });
-// (la ruta es ilustrativa: acordarla con el equipo de back end; "params" codifica el valor de forma segura).
-// La autorización REAL por rol debe validarla FastAPI: ProtectedRoute solo oculta pantallas.
+// Derivación de colecciones de reportes 
+const reportDiets = dietas.map((d) => ({
+  id: String(d.id_dieta),
+  name: d.nombre_dieta,
+}));
+
+const reportReviewers = usuarios
+  .filter((u) => u.rol === 'jefe' || u.rol === 'nutricionista')
+  .map((u) => ({
+    id: String(u.id_usuario),
+    name: `${u.nombre} ${u.apellidos || ''}`.trim(),
+  }));
+
+const generatedMenus = menus.map((m) => {
+  const creator = usuarios.find((u) => u.id_usuario === m.id_usuario_creador);
+  const creatorName = creator ? `${creator.nombre} ${creator.apellidos || ''}`.trim() : 'Lic. Sistema';
+
+  return {
+    id: String(m.id_menu),
+    name: m.nombre_menu,
+    dietId: String(m.id_dieta),
+    origin: m.id_menu === 5 ? 'manual' : 'automatico',
+    creatorName,
+    createdAt: m.fecha_creacion ? `${m.fecha_creacion}T10:30:00Z` : '2026-10-01T10:30:00Z',
+    parameters: { targetCalories: 1800, mealsPerDay: 4, excludedGroups: [] },
+    validation: m.fecha_validacion
+      ? {
+          reviewerId: reportReviewers[0]?.id || '1',
+          validatedAt: `${m.fecha_validacion}T14:00:00Z`,
+          result: m.estado_menu === 'rechazado' ? 'rechazado' : 'aprobado',
+          observations: m.observaciones || '',
+        }
+      : null,
+  };
+});
 
 // Opciones del selector de dietas:
 export async function getDietOptions() {
