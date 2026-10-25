@@ -8,9 +8,17 @@ import { AppRoutes } from '../routes/AppRoutes';
 // Datos propios del test: no dependen del mockData real
 vi.mock('../data/mockData', () => ({
   usuarios: [
-    { id_usuario: 1, nombre: 'Ana Admin', email: 'admin@test.cu', contrasenna: 'admin123', rol: 'admin' },
-    { id_usuario: 4, nombre: 'Pablo Paciente', email: 'paciente@test.cu', contrasenna: 'pac12345', rol: 'paciente' },
-    { id_usuario: 5, nombre: 'Nuevo Paciente', email: null, contrasenna: '1234', rol: 'paciente' },
+    { id_usuario: 1, nombre: 'Ana Admin', correo: 'admin@test.cu', email: 'admin@test.cu', contrasena: 'admin123', contrasenna: 'admin123', rol: 'admin' },
+    { id_usuario: 2, nombre: 'Ana Nutricionista', correo: 'nutri@test.cu', email: 'nutri@test.cu', contrasena: 'nutri123', contrasenna: 'nutri123', rol: 'nutricionista' },
+    { id_usuario: 4, nombre: 'Pablo Paciente', correo: 'paciente@test.cu', email: 'paciente@test.cu', contrasena: 'pac12345', contrasenna: 'pac12345', rol: 'paciente' },
+    { id_usuario: 5, nombre: 'Nuevo Paciente', correo: null, email: null, contrasena: '1234', contrasenna: '1234', rol: 'paciente' },
+  ],
+  atiende: [],
+  dietas: [
+    { id_dieta: 1, nombre_dieta: 'Balanceada' },
+  ],
+  menus: [
+    { id_menu: 1, nombre_menu: 'Desayuno', id_dieta: 1, id_usuario_creador: 1, fecha_creacion: '2026-10-01', estado_menu: 'aprobado', fecha_validacion: '2026-10-02', observaciones: null },
   ],
 }));
 
@@ -25,8 +33,8 @@ const renderAt = (path) =>
     </AuthProvider>,
   );
 
-const setSession = (rol) =>
-  localStorage.setItem(SESSION_KEY, JSON.stringify({ id_usuario: 99, nombre: 'Test', rol }));
+const setSession = (rol, id_usuario = 99) =>
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ id_usuario, nombre: 'Test', rol }));
 
 const heading = (name) => screen.getByRole('heading', { name });
 
@@ -61,7 +69,7 @@ describe('Protección de rutas', () => {
   it('la sesión guardada sobrevive a una recarga (sin pasar por el login)', () => {
     setSession('nutricionista');
     renderAt('/nutricionista/menus');
-    expect(heading('Gestión de Menús')).toBeInTheDocument();
+    expect(heading('Menús')).toBeInTheDocument();
   });
 
   it.each([
@@ -127,8 +135,8 @@ describe('Login simulado', () => {
   it('activa una cuenta pendiente y entra con su dashboard', async () => {
     const user = userEvent.setup();
     renderAt('/login');
-    await user.click(screen.getByRole('button', { name: 'Primer acceso' }));
-    await user.type(screen.getByLabelText('ID de usuario'), '5');
+    await user.click(screen.getByRole('button', { name: /Primer acceso/ }));
+    await user.type(screen.getByLabelText('ID de usuario provista'), '5');
     await user.type(screen.getByLabelText('Nuevo correo electrónico'), 'nuevo@test.cu');
     await user.type(screen.getByLabelText('Nueva contraseña'), 'secreta123');
     await user.click(screen.getByRole('button', { name: 'Activar cuenta' }));
@@ -138,8 +146,8 @@ describe('Login simulado', () => {
   it('no permite activar una cuenta ya configurada ni usar un correo repetido', async () => {
     const user = userEvent.setup();
     renderAt('/login');
-    await user.click(screen.getByRole('button', { name: 'Primer acceso' }));
-    await user.type(screen.getByLabelText('ID de usuario'), '4');
+    await user.click(screen.getByRole('button', { name: /Primer acceso/ }));
+    await user.type(screen.getByLabelText('ID de usuario provista'), '4');
     await user.type(screen.getByLabelText('Nuevo correo electrónico'), 'otro@test.cu');
     await user.type(screen.getByLabelText('Nueva contraseña'), 'secreta123');
     await user.click(screen.getByRole('button', { name: 'Activar cuenta' }));
@@ -155,10 +163,10 @@ describe('Login simulado', () => {
     expect(localStorage.getItem(SESSION_KEY)).toBeNull();
   });
 
-  it('con sesión activa, /login reenvía al dashboard del rol', () => {
-    setSession('nutricionista');
+ it('con sesión activa, /login reenvía al dashboard del rol', () => {
+    setSession('nutricionista', 2);
     renderAt('/login');
-    expect(heading('Dashboard Nutricionista')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Bienvenida/i })).toBeInTheDocument();
   });
 });
 

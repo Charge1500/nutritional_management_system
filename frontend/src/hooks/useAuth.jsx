@@ -13,7 +13,8 @@ const MIN_PASSWORD_LENGTH = 6;
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
 // Una cuenta está en estado pendiente mientras conserve la contraseña temporal del admin. 
-const isPendingActivation = (u) => u.contrasenna === TEMP_PASSWORD;
+// Soporta ambas convenciones de nomenclatura (contrasenna / contrasena)
+const isPendingActivation = (u) => (u.contrasenna || u.contrasena) === TEMP_PASSWORD;
 
 // Lee la sesión guardada, devuelve null si no existe, está corrupta o tiene un rol inválido.
 const readSession = () => {
@@ -38,7 +39,8 @@ const saveSession = (session) => {
 // Copia del usuario sin la contraseña: es lo único que se guarda en el estado y en localStorage
 
 // eslint-disable-next-line no-unused-vars
-const toSession = ({ contrasenna, ...publicData }) => publicData;
+const toSession = ({ contrasenna, contrasena, password, ...publicData }) => publicData;
+// Asegura que ninguna variante del atributo contraseña acabe en localStorage ni en memoria
 
 export const AuthProvider = ({ children }) => {
   // Inicialización lazy: la sesión se lee antes del primer render.
@@ -59,8 +61,10 @@ export const AuthProvider = ({ children }) => {
       const wanted = String(identifier).trim().toLowerCase();
       const found = dbUsuarios.find((u) => {
         const matchesId = String(u.id_usuario) === wanted;
-        const matchesEmail = Boolean(u.email) && u.email.toLowerCase() === wanted;
-        return (matchesId || matchesEmail) && u.contrasenna === password;
+        const userEmail = u.email || u.correo;
+        const matchesEmail = Boolean(userEmail) && userEmail.toLowerCase() === wanted;
+        const userPass = u.contrasenna || u.contrasena;
+        return (matchesId || matchesEmail) && userPass === password;
       });
       // Las cuentas pendientes no pueden entrar por aquí pq deben activarse primero
       if (!found || isPendingActivation(found) || !isValidRole(found.rol)) {
@@ -84,10 +88,10 @@ export const AuthProvider = ({ children }) => {
         return { user: null, error: 'WEAK_PASSWORD' };
       }
 
-      const emailTaken = dbUsuarios.some((u) => u !== pending && u.email && u.email.toLowerCase() === email,);
+      const emailTaken = dbUsuarios.some((u) => u !== pending && (u.email || u.correo) && (u.email || u.correo).toLowerCase() === email,);
       if (emailTaken) return { user: null, error: 'EMAIL_IN_USE' };
 
-      const activated = { ...pending, email, contrasenna: newPassword };
+      const activated = { ...pending, correo: email, email, contrasena: newPassword, contrasenna: newPassword };
       setDbUsuarios((prev) => prev.map((u) => (u === pending ? activated : u)));
       return { user: startSession(activated), error: null };
     }, [dbUsuarios, startSession],

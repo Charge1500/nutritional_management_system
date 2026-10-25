@@ -120,8 +120,7 @@ export const Login = () => {
 
           {error && (
             <div className='rounded-md bg-red-50 p-3'>
-            <p role="alert" className="text-center text-sm text-red-600"> </p>
-              {error}
+              <p role="alert" className="text-center text-sm text-red-600">{error}</p>
             </div>
           )}
 
