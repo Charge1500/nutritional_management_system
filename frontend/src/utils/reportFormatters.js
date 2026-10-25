@@ -9,19 +9,43 @@ const PARAMETER_LABELS = Object.freeze({
   proporcion_preparacion: 'Proporción de preparación',
 });
 
-// Convierte una fecha ISO o string en formato local (ej. "2026-09-14T10:30:00Z" en "14/09/2026").
+
 export function formatDate(isoString) {
-  if (!isoString) return '-'; // new Date(null) daría 1970, por eso se descarta antes
-  const date = new Date(isoString); // intenta interpretar el texto como fecha
-  if (Number.isNaN(date.getTime())) return '-'; // fecha inválida: no se muestra "Invalid Date"
+  if (!isoString) return '-';
+
+  // Si la cadena es formato solo fecha YYYY-MM-DD (ej: "2026-10-02")
+  if (/^\d{4}-\d{2}-\d{2}$/.test(isoString)) {
+    const [year, month, day] = isoString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
+
+  // Si la cadena contiene marca ISO/Hora completa
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return '-';
+
   return date.toLocaleDateString('es-ES', {
     day: '2-digit',
-    month: '2-digit', 
-    year: 'numeric', // año completo
+    month: '2-digit',
+    year: 'numeric',
   });
 }
 
-// Convierte el objeto o texto de parámetros en una sola línea de texto legible.
+function stringifyValue(val) {
+  if (val === null || val === undefined) return 'Ninguno';
+  if (Array.isArray(val)) return val.length > 0 ? val.map(stringifyValue).join(', ') : 'Ninguno';
+  if (typeof val === 'object') {
+    const pairs = Object.entries(val).map(([k, v]) => `${k}: ${stringifyValue(v)}`);
+    return pairs.length > 0 ? pairs.join(', ') : 'Ninguno';
+  }
+  return String(val);
+}
+
+
 export function formatParameters(parameters) {
   if (!parameters) return 'Sin parámetros'; // valor ausente o de tipo inesperado
   if (typeof parameters == 'string') return parameters; 
@@ -34,12 +58,7 @@ export function formatParameters(parameters) {
     .map(([key, value]) => {
       // hasOwn evita leer claves heredadas como "toString" 
       const label = Object.hasOwn(PARAMETER_LABELS, key) ? PARAMETER_LABELS[key] : key;
-
-      // Las listas se unen con comas, una lista vacía se muestra como "Ninguno".
-      const text = Array.isArray(value)
-        ? (value.length > 0 ? value.join(', ') : 'Ninguno')
-        : String(value); // cualquier otro valor se convierte a texto
-      return `${label}: ${text}`; // ej. "Calorías objetivo: 1500"
+return `${label}: ${stringifyValue(value)}`;
     })
-    .join(' | '); // separa los parámetros con una barra vertical
+    .join(' | ');
 }
