@@ -1,6 +1,17 @@
 import { jsPDF } from 'jspdf'; // generador de PDF en el navegador
 import autoTable from 'jspdf-autotable'; // dibuja tablas con paginación automática
 
+function sanitizeText(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/–/g, '-')
+    .replace(/—/g, '-')
+    .replace(/≥/g, '>=')
+    .replace(/≤/g, '<=');
+}
+
 // Exporta una tabla a PDF.
 // columns: [{ label, getText }]  rows: lista de filas  fileName: nombre sin extensión
 export function exportTableToPdf({ title, subtitle, columns, rows, fileName }) {
@@ -14,17 +25,19 @@ export function exportTableToPdf({ title, subtitle, columns, rows, fileName }) {
   let startY = 60; // posición vertical donde empezará la tabla
   if (subtitle) {
     doc.setFontSize(10); // texto secundario más pequeño
-    doc.text(subtitle, 40, 58); // subtítulo justo debajo del título
+    doc.text(sanitizeText(subtitle), 40, 58);
     startY = 75; // se baja la tabla para no tapar el subtítulo
   }
 
   autoTable(doc, {
     startY, // dónde empieza la tabla
-    head: [columns.map((column) => column.label)], // fila de encabezados
-    body: rows.map((row) => columns.map((column) => String(column.getText(row) ?? ''))), // Cada celda se convierte a texto: así nunca se interpreta como HTML ni como código.
+    head: [columns.map((column) => sanitizeText(column.label))],
+    body: rows.map((row) =>
+      columns.map((column) => sanitizeText(column.getText(row) ?? ''))
+    ),
     margin: { left: 40, right: 40 }, // márgenes laterales
     styles: { fontSize: 9, cellPadding: 4, overflow: 'linebreak' }, // texto largo salta de línea
-    headStyles: { fillColor: [22, 101, 52] }, // encabezado verde oscuro (RGB)
+    headStyles: { fillColor: [5, 150, 105] }, 
   });
 
   const totalPages = doc.internal.getNumberOfPages(); // páginas generadas por la tabla
