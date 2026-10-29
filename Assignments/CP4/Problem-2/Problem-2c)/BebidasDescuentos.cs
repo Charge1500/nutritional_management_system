@@ -215,6 +215,7 @@ namespace BebidasDescuentos
                 .ConComplemento("Azúcar", 2);
             Console.WriteLine(cb.Descriptor.AJson());
             Console.WriteLine("Para reconstruir: leer el JSON y envolver la base con un decorador por cada porción (estos complementos son aditivos)");
+            PruebaFlyweight.Ejecutar();
         }
 
         private static void Caso(ServicioPrecios precios, string titulo,

@@ -1,5 +1,14 @@
 {
   "estrategias": [
-    { "nombre": "rapida", "tipoCompleto": "NavegadorApp.EstrategiaRapida, NavegadorApp" }
+    { "nombre": "rapida", "tipoCompleto": "NavegadorApp.EstrategiaRapida, NavegadorApp" },
+    { "nombre": "corta", "tipoCompleto": "NavegadorApp.EstrategiaCorta, NavegadorApp" },
+    { "nombre": "evitar_autopistas", "tipoCompleto": "NavegadorApp.EstrategiaEvitarAutopistas, NavegadorApp" },
+    { "nombre": "evitar_peajes", "tipoCompleto": "NavegadorApp.EstrategiaEvitarPeajes, NavegadorApp" },
+    { "nombre": "ecologica", "tipoCompleto": "NavegadorApp.EstrategiaEcologica, NavegadorApp" },
+    { 
+      "nombre": "turistica_panoramica", 
+      "tipoCompleto": "PluginTuristica.EstrategiaTuristicaPanoramica, PluginTuristica",
+      "dll": "PluginTuristica.dll" 
+    }
   ]
 }
