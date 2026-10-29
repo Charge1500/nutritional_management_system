@@ -1,0 +1,5 @@
+{
+  "estrategias": [
+    { "nombre": "rapida", "tipoCompleto": "NavegadorApp.EstrategiaRapida, NavegadorApp" }
+  ]
+}

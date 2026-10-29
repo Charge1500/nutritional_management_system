@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- El plugin SOLO depende del proyecto de contratos compartido.
+         NavegadorApp NO referencia este proyecto: por eso el plugin
+         puede añadirse después, sin recompilar la aplicación base. -->
+    <ProjectReference Include="../Contratos/Contratos.csproj" />
+  </ItemGroup>
+
+</Project>
