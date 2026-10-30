@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace BebidasDescuentos
 {
     // Decorador con estado extrínseco (la cantidad va fuera del objeto compartido)
-    public class ComplementoFlyweight : DecoradorBebida
+    public class ComplementoFlyweight : AgregadoDecorator 
     {
         private readonly string _tipo;
         private readonly double _costoUnitario;
@@ -18,11 +18,11 @@ namespace BebidasDescuentos
             _cantidad = cantidad;
         }
 
-        public override string ObtenerDescripcion()
-            => bebida.ObtenerDescripcion() + $" + {_tipo} x{_cantidad}";
+        public override string GetDescripcion()
+            => _bebida.GetDescripcion() + $" + {_tipo} x{_cantidad}";
 
-        public override double ObtenerCosto()
-            => bebida.ObtenerCosto() + (_costoUnitario * _cantidad);
+        public override double Costo()
+            => _bebida.Costo() + (_costoUnitario * _cantidad);
     }
 
     // Fábrica Flyweight: comparte los datos intrínsecos de cada complemento
@@ -71,8 +71,8 @@ namespace BebidasDescuentos
             bebidaNormal = new Leche(bebidaNormal);   // doble leche
             bebidaNormal = new Azucar(bebidaNormal);  // doble azúcar
 
-            Console.WriteLine($"Bebida: {bebidaNormal.ObtenerDescripcion()}");
-            Console.WriteLine($"Costo: {bebidaNormal.ObtenerCosto():F2}");
+            Console.WriteLine($"Bebida: {bebidaNormal.GetDescripcion()}");
+            Console.WriteLine($"Costo: {bebidaNormal.Costo():F2}");
             Console.WriteLine("Objetos creados: 1 (Café) + 6 (Decoradores) = 7 objetos.\n");
 
             // --- B. Con Flyweight ---
@@ -92,8 +92,8 @@ namespace BebidasDescuentos
             bebidaFlyweight = new ComplementoFlyweight(bebidaFlyweight, leche2.tipo, leche2.costo, 1);
             bebidaFlyweight = new ComplementoFlyweight(bebidaFlyweight, azucar2.tipo, azucar2.costo, 1);
 
-            Console.WriteLine($"Bebida: {bebidaFlyweight.ObtenerDescripcion()}");
-            Console.WriteLine($"Costo: {bebidaFlyweight.ObtenerCosto():F2}");
+            Console.WriteLine($"Bebida: {bebidaFlyweight.GetDescripcion()}");
+            Console.WriteLine($"Costo: {bebidaFlyweight.Costo():F2}");
 
             Console.WriteLine("\n--- ANÁLISIS DE ALTA CONCURRENCIA ---");
             Console.WriteLine("Sin Flyweight: 1000 pedidos de este tipo crean 7000 objetos.");
