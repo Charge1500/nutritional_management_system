@@ -4,7 +4,8 @@ import {
   gruposNutricionales,
   coberturaDietaGrupo,
   alimentos,
-  restriccionesDietaAlimento
+  restriccionesDietaAlimento,
+  menus
 } from "../data/mockData";
 
 
@@ -77,3 +78,8 @@ export const obtenerRestriccionesDeDieta = (idDieta) => {
     .filter((restriccion) => restriccion.alimento);
 };
 
+export const obtenerMenusDeDieta = (idDieta) => {
+  return menus.filter(
+    (menu) => menu.id_dieta === Number(idDieta)
+  );
+};
