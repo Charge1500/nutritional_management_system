@@ -84,3 +84,19 @@ export const obtenerGruposConCantidadAlimentos = () => {
     };
   });
 };
+
+// Obtener los alimentos asociados a un grupo nutricional.
+export const obtenerAlimentosDeGrupo = (idGrupo) => {
+  const relaciones = alimentosGruposNutricionales.filter(
+    (relacion) =>
+      relacion.id_grupo_nutricional === Number(idGrupo)
+  );
+
+  return relaciones
+    .map((relacion) =>
+      alimentos.find(
+        (alimento) => alimento.id_alimento === relacion.id_alimento
+      )
+    )
+    .filter(Boolean);
+};

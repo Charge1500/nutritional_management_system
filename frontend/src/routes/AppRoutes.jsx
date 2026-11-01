@@ -15,6 +15,7 @@ import { ReportsHome } from '../pages/Reports/ReportsHome';
 import { ReportMenusByDiet } from '../pages/Reports/ReportMenusByDiet';
 import { ReportValidatedMenus } from '../pages/Reports/ReportValidatedMenus';
 import { NutritionGroups } from '../pages/Head/Group/NutritionistGroup';
+import { GroupDetails } from '../pages/Head/Group/GroupDetails';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -66,6 +67,7 @@ export function AppRoutes() {
           <Route path="/jefe/alimentos" element={<Placeholder title="Validación de Alimentos" />} />
           <Route path="/jefe/dietas" element={<Placeholder title="Gestión de Dietas" />} />
           <Route path="/jefe/grupos" element={<NutritionGroups/>} />
+          <Route path="/jefe/grupos/:id" element={<GroupDetails/>} />
         </Route>
 
         {/*Rutas exclusivas para Admin*/}
