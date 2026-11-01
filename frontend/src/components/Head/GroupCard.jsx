@@ -4,8 +4,7 @@ import { Card } from "../Card";
 export const GroupCard = ({ group, cantidadAlimentos }) => {
   const navigate = useNavigate();
 
-  // Un grupo solo puede modificarse si no tiene alimentos asociados.
-  const puedeEditar = cantidadAlimentos === 0;
+
 
   return (
     <Card className="flex h-full flex-col gap-4">
@@ -62,23 +61,7 @@ export const GroupCard = ({ group, cantidadAlimentos }) => {
           Ver detalles
         </button>
 
-        <button
-          type="button"
-          disabled={!puedeEditar}
-          onClick={() =>
-            navigate(
-              `/jefe/grupos/${group.id_grupo_nutricional}/editar`
-            )
-          }
-          className="flex-1 rounded-lg bg-health-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-health-600 disabled:cursor-not-allowed disabled:opacity-40"
-          title={
-            puedeEditar
-              ? "Editar grupo"
-              : "No se puede editar porque tiene alimentos asociados"
-          }
-        >
-          Editar
-        </button>
+       
 
       </div>
     </Card>

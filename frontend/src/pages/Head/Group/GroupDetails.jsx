@@ -1,5 +1,4 @@
 
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -13,16 +12,9 @@ export const GroupDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [grupo, setGrupo] = useState(null);
-  const [alimentos, setAlimentos] = useState([]);
-
-  useEffect(() => {
-    const grupoObtenido = obtenerGrupoPorId(id);
-    const alimentosObtenidos = obtenerAlimentosDeGrupo(id);
-
-    setGrupo(grupoObtenido);
-    setAlimentos(alimentosObtenidos);
-  }, [id]);
+  // Obtenemos los datos directamente a partir del ID de la ruta.
+  const grupo = obtenerGrupoPorId(id);
+  const alimentos = obtenerAlimentosDeGrupo(id);
 
   if (!grupo) {
     return (
@@ -96,7 +88,7 @@ export const GroupDetails = () => {
             type="button"
             disabled={!puedeEditar}
             onClick={() =>
-              navigate(`/jefe/grupos/${id}/editar`)
+              navigate(`/jefe/grupos/nuevo?id=${grupo.id_grupo_nutricional}`)
             }
             title={
               puedeEditar
