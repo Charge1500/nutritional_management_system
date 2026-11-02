@@ -15,6 +15,12 @@ import { ReportsHome } from '../pages/Reports/ReportsHome';
 import { ReportMenusByDiet } from '../pages/Reports/ReportMenusByDiet';
 import { ReportValidatedMenus } from '../pages/Reports/ReportValidatedMenus';
 import { RegistroConsumo } from '../pages/Patient/RegistroConsumo';
+import { NutritionGroups } from '../pages/Head/Group/NutritionistGroup';
+import { GroupDetails } from '../pages/Head/Group/GroupDetails';
+import { GroupForm } from '../pages/Head/Group/GroupForm';
+import { Diets } from '../pages/Head/Diets';
+import { DietForm } from '../pages/Head/DietForm';
+import { NutritionistBossHome } from '../pages/Head/NutritionistBossHome';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -61,11 +67,14 @@ export function AppRoutes() {
 
         {/*Rutas exclusivas para Jefe de Nutrición*/}
         <Route element={<ProtectedRoute allowedRoles={[ROLES.JEFE]} />}>
-          <Route path="/jefe" element={<Placeholder title="Dashboard Jefe" />} />
-          <Route path="/jefe/menus" element={<Placeholder title="Validación de Menús" />} />
-          <Route path="/jefe/alimentos" element={<Placeholder title="Validación de Alimentos" />} />
-          <Route path="/jefe/dietas" element={<Placeholder title="Gestión de Dietas" />} />
-          <Route path="/jefe/grupos" element={<Placeholder title="Gestión de Grupos Nutricionales" />} />
+          <Route path="/jefe" element={<NutritionistBossHome/>} />
+          <Route path="/jefe/dietas" element={<Diets/>} />
+          <Route path="/jefe/dietas/nueva" element={<DietForm/>} />
+          <Route path="/jefe/grupos" element={<NutritionGroups/>} />
+          <Route path="/jefe/grupos/:id" element={<GroupDetails/>} />
+          <Route path="/jefe/grupos/nuevo" element={<GroupForm/>} />
+        
+          
         </Route>
 
         {/*Rutas exclusivas para Admin*/}
