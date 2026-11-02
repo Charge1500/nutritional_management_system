@@ -10,10 +10,11 @@ import { FoodDetails } from '../pages/Nutritionist/FoodDetails';
 import { FoodForm } from '../pages/Nutritionist/FoodForm';
 import { NutritionistMenu } from '../pages/Nutritionist/NutritionistMenu';
 import { MenuDetails } from '../pages/Nutritionist/MenuDetails';
-
+import { PatientHome } from '../pages/Patient/PatientHome';
 import { ReportsHome } from '../pages/Reports/ReportsHome';
 import { ReportMenusByDiet } from '../pages/Reports/ReportMenusByDiet';
 import { ReportValidatedMenus } from '../pages/Reports/ReportValidatedMenus';
+import { RegistroConsumo } from '../pages/Patient/RegistroConsumo';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -36,9 +37,9 @@ export function AppRoutes() {
 
         {/*Rutas exclusivas para Pacientes*/}
         <Route element={<ProtectedRoute allowedRoles={[ROLES.PACIENTE]} />}>
-          <Route path="/paciente" element={<Placeholder title="Dashboard Paciente" />} />
+          <Route path="/paciente" element={<PatientHome />} />
           <Route path="/paciente/menus" element={<Placeholder title="Mis Menús" />} />
-          <Route path="/paciente/consumo" element={<Placeholder title="Registrar Consumo" />} />
+          <Route path="/paciente/consumo" element={<RegistroConsumo />} />
           <Route path="/paciente/revaloracion" element={<Placeholder title="Solicitar Revaloración" />} />
           <Route path="/paciente/valoraciones" element={<Placeholder title="Mis  Valoraciones" />} />
         </Route>
