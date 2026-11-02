@@ -19,6 +19,7 @@ import { GroupDetails } from '../pages/Head/Group/GroupDetails';
 import { GroupForm } from '../pages/Head/Group/GroupForm';
 import { Diets } from '../pages/Head/Diets';
 import { DietForm } from '../pages/Head/DietForm';
+import { NutritionistBossHome } from '../pages/Head/NutritionistBossHome';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -65,9 +66,7 @@ export function AppRoutes() {
 
         {/*Rutas exclusivas para Jefe de Nutrición*/}
         <Route element={<ProtectedRoute allowedRoles={[ROLES.JEFE]} />}>
-          <Route path="/jefe" element={<Placeholder title="Dashboard Jefe" />} />
-          <Route path="/jefe/menus" element={<Placeholder title="Validación de Menús" />} />
-          <Route path="/jefe/alimentos" element={<Placeholder title="Validación de Alimentos" />} />
+          <Route path="/jefe" element={<NutritionistBossHome/>} />
           <Route path="/jefe/dietas" element={<Diets/>} />
           <Route path="/jefe/dietas/nueva" element={<DietForm/>} />
           <Route path="/jefe/grupos" element={<NutritionGroups/>} />

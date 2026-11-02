@@ -1,21 +1,27 @@
-import {
-  menus,
-  
-} from "../data/mockData";
 
-// Obtener todos los menus registrados.
+import { menus } from "../data/mockData";
+import { ROLES } from "../data/roles";
+
+// Obtener todos los menús registrados.
 export const obtenerMenus = () => {
   return menus;
 };
 
-// Obtener un menu por su identificador.
+// Obtener un menú por su identificador.
 export const obtenerMenuPorId = (idMenu) => {
   return menus.find(
     (menu) => menu.id_menu === Number(idMenu)
   );
 };
-import { ROLES } from "../data/roles";
 
+// Obtener los menús pendientes de aprobación.
+export const obtenerMenusPendientes = () => {
+  return menus.filter(
+    (menu) => menu.estado_menu === "pendiente"
+  );
+};
+
+// Validar un menú. Solo el jefe puede aprobarlo o rechazarlo.
 export const validarMenu = (
   idMenu,
   estado,
@@ -30,22 +36,28 @@ export const validarMenu = (
     return false;
   }
 
-  if (estado === "rechazado" && !observaciones?.trim()) {
+  if (
+    estado === "rechazado" &&
+    !observaciones?.trim()
+  ) {
     return false;
   }
 
-  const menu = menus.find(
-    (item) => item.id_menu === Number(idMenu)
-  );
+  const menu = obtenerMenuPorId(idMenu);
 
   if (!menu || menu.estado_menu !== "pendiente") {
     return false;
   }
 
   menu.estado_menu = estado;
-  menu.fecha_validacion = new Date().toISOString().slice(0, 10);
+  menu.fecha_validacion = new Date()
+    .toISOString()
+    .slice(0, 10);
+
   menu.observaciones =
-    estado === "rechazado" ? observaciones.trim() : null;
+    estado === "rechazado"
+      ? observaciones.trim()
+      : null;
 
   return true;
 };
