@@ -33,8 +33,6 @@ export const NAV_LINKS_BY_ROLE = Object.freeze({
     { name: 'Solicitudes', path: '/nutricionista/solicitudes' },
 
     //Funciones exclusivas de validación y gestión del Jefe
-    { name: 'Validar menús', path: '/jefe/menus' },
-    { name: 'Validar alimentos', path: '/jefe/alimentos' },
     { name: 'Dietas', path: '/jefe/dietas' },
     { name: 'Grupos', path: '/jefe/grupos' },
     { name: 'Reportes', path: '/reportes' },
