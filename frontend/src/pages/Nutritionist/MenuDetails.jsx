@@ -5,25 +5,14 @@ import { ROLES } from "../../data/roles";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-import { obtenerUsuarioPorId } from "../../services/userService";
-import {
-  obtenerMenuPorId,
-  validarMenu,
-} from "../../services/menuService";
-import {
-  obtenerDietaPorId,
-  obtenerGruposDeDieta,
-} from "../../services/dietService";
-import {
-  obtenerAlimentoPorId,
-  obtenerGruposDeAlimento,
-} from "../../services/foodService";
+import { validarMenu } from "../../services/menuService";
+import { obtenerDetallesMenu } from "../../facades/menusFacade";
 
-import { contenidoMenuAlimento } from "../../data/mockData";
 
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import { Badge } from "../../components/Badge";
+import{obtenerUsuarioPorId} from "../../services/userService"
 
 // Página que muestra los detalles de un menú nutricional.
 export const MenuDetails = () => {
@@ -43,10 +32,9 @@ export const MenuDetails = () => {
   const esJefe = usuarioActual?.rol === ROLES.JEFE;
 
   // Obtenemos la información del menú.
-  const menu = obtenerMenuPorId(id);
-
+  const detalles = obtenerDetallesMenu(id)
   // Si el menú no existe, mostramos un mensaje.
-  if (!menu) {
+  if (!detalles) {
     return (
       <section className="space-y-4">
         <div>
@@ -66,20 +54,16 @@ export const MenuDetails = () => {
     );
   }
 
-  const esPendiente = menu.estado_menu === "pendiente";
+const {
+  menu,
+  creador,
+  dieta,
+  grupos,
+  alimentos
+} = detalles;
 
-  // Obtenemos los datos relacionados con el menú.
-  const creador = obtenerUsuarioPorId(menu.id_usuario_creador);
-  const dieta = obtenerDietaPorId(menu.id_dieta);
-  const grupos = dieta
-    ? obtenerGruposDeDieta(dieta.id_dieta)
-    : [];
-
-  // Obtenemos los alimentos que pertenecen a este menú.
-  const alimentosMenu = contenidoMenuAlimento.filter(
-    (contenido) =>
-      contenido.id_menu === Number(menu.id_menu)
-  );
+const esPendiente = menu.estado_menu === "pendiente";
+alimentos.map((contenido) => console.log(contenido))
 
   // Aprobar menú.
   const aprobarMenu = () => {
@@ -256,18 +240,9 @@ export const MenuDetails = () => {
           </p>
         </div>
 
-        {alimentosMenu.length > 0 ? (
+        {alimentos.length > 0 ? (
           <div className="divide-y divide-gray-100 border-t border-gray-100">
-            {alimentosMenu.map((contenido, index) => {
-              const alimento = obtenerAlimentoPorId(
-                contenido.id_alimento
-              );
-
-              const gruposAlimento = obtenerGruposDeAlimento(
-                contenido.id_alimento
-              );
-
-              if (!alimento) return null;
+            {alimentos.map((contenido, index) => {       
 
               return (
                 <div
@@ -276,12 +251,12 @@ export const MenuDetails = () => {
                 >
                   <div className="min-w-0">
                     <h3 className="font-medium text-content">
-                      {alimento.nombre_alimento}
+                      {contenido.nombre_alimento}
                     </h3>
 
-                    {gruposAlimento.length > 0 ? (
+                    {grupos.length > 0 ? (
                       <div className="mt-2 flex flex-wrap gap-2">
-                        {gruposAlimento.map((grupo) => (
+                        {grupos.map((grupo) => (
                           <span
                             key={grupo.id_grupo_nutricional}
                             className="rounded-full bg-health-50 px-2.5 py-1 text-xs font-medium text-health-700"
