@@ -1012,6 +1012,18 @@ export const consumos = [
 ];
 
 // ============================================================
+// R17. INSCRIPCIONES PACIENTE–DIETA
+// ============================================================
+
+export const inscripcionesPacienteDieta = [
+  { id_usuario: 5, id_dieta: 1, fecha_inscripcion: "2026-09-22" },
+  { id_usuario: 5, id_dieta: 2, fecha_inscripcion: "2026-09-28" },
+  { id_usuario: 6, id_dieta: 2, fecha_inscripcion: "2026-09-26" },
+  { id_usuario: 6, id_dieta: 3, fecha_inscripcion: "2026-10-02" },
+  { id_usuario: 7, id_dieta: 3, fecha_inscripcion: "2026-10-01" },
+];
+
+// ============================================================
 // OBJETO GENERAL DE DATOS SIMULADOS
 // ============================================================
 
@@ -1035,4 +1047,5 @@ export const mockData = {
   recetasPlatosCompuestos,
 
   consumos,
+  inscripcionesPacienteDieta,
 };
