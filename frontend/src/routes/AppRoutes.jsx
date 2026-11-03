@@ -21,6 +21,7 @@ import { GroupForm } from '../pages/Head/Group/GroupForm';
 import { Diets } from '../pages/Head/Diets';
 import { DietForm } from '../pages/Head/DietForm';
 import { NutritionistBossHome } from '../pages/Head/NutritionistBossHome';
+import { SolicitarRevalorizacion } from '../pages/Patient/SolicitarRevalorizacion';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -46,7 +47,7 @@ export function AppRoutes() {
           <Route path="/paciente" element={<PatientHome />} />
           <Route path="/paciente/menus" element={<Placeholder title="Mis Menús" />} />
           <Route path="/paciente/consumo" element={<RegistroConsumo />} />
-          <Route path="/paciente/revaloracion" element={<Placeholder title="Solicitar Revaloración" />} />
+          <Route path="/paciente/revaloracion" element={<SolicitarRevalorizacion />} /> 
           <Route path="/paciente/valoraciones" element={<Placeholder title="Mis  Valoraciones" />} />
         </Route>
 

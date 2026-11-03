@@ -1,4 +1,3 @@
-
 /*
  * Datos simulados del sistema de gestión para la generación
  * automática de menús nutricionales.
@@ -93,6 +92,7 @@ export const solicitudes = [
     id_solicitud: 1,
     id_usuario: 5,
     tipo_solicitud: "revaloracion",
+    id_nutricionista: 1,
     descripcion: "Solicito una revisión de mi dieta.",
     estado_solicitud: "pendiente",
     fecha_solicitud: "2026-10-08",
@@ -102,6 +102,7 @@ export const solicitudes = [
     id_solicitud: 2,
     id_usuario: 6,
     tipo_solicitud: "cambio_dieta",
+    id_nutricionista: 2,
     descripcion: "Solicito revisar mi programa nutricional.",
     estado_solicitud: "aprobada",
     fecha_solicitud: "2026-10-09",
@@ -111,6 +112,7 @@ export const solicitudes = [
     id_solicitud: 3,
     id_usuario: 7,
     tipo_solicitud: "revaloracion",
+    id_nutricionista: 1,
     descripcion: "Necesito actualizar mi valoración nutricional.",
     estado_solicitud: "pendiente",
     fecha_solicitud: "2026-10-11",
@@ -738,168 +740,45 @@ export const menusAsignados = [
 
 // ============================================================
 // R11. RESTRICCIONES POR DIETA Y ALIMENTO
-//
-// IMPORTANTE:
-// Las cantidades permitidas pertenecen a la combinación
-// dieta-alimento, no al grupo nutricional.
-//
-// El mismo alimento puede tener cantidades distintas
-// en dietas diferentes.
 // ============================================================
 
 export const restriccionesDietaAlimento = [
   // Dieta 1: Control de peso
-  {
-    id_dieta: 1,
-    id_alimento: 1,
-    cantidad_minima: 50,
-    cantidad_maxima: 150,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 1,
-    id_alimento: 2,
-    cantidad_minima: 100,
-    cantidad_maxima: 200,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 1,
-    id_alimento: 3,
-    cantidad_minima: 80,
-    cantidad_maxima: 200,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 1,
-    id_alimento: 4,
-    cantidad_minima: 1,
-    cantidad_maxima: 2,
-    unidad_medida: "unidades",
-  },
-  {
-    id_dieta: 1,
-    id_alimento: 6,
-    cantidad_minima: 30,
-    cantidad_maxima: 60,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 1,
-    id_alimento: 10,
-    cantidad_minima: 100,
-    cantidad_maxima: 200,
-    unidad_medida: "ml",
-  },
+  { id_dieta: 1, id_alimento: 1, cantidad_minima: 50, cantidad_maxima: 150, unidad_medida: "g" },
+  { id_dieta: 1, id_alimento: 2, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "g" },
+  { id_dieta: 1, id_alimento: 3, cantidad_minima: 80, cantidad_maxima: 200, unidad_medida: "g" },
+  { id_dieta: 1, id_alimento: 4, cantidad_minima: 1, cantidad_maxima: 2, unidad_medida: "unidades" },
+  { id_dieta: 1, id_alimento: 6, cantidad_minima: 30, cantidad_maxima: 60, unidad_medida: "g" },
+  { id_dieta: 1, id_alimento: 10, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "ml" },
 
   // Dieta 2: Diabetes tipo 2
-  {
-    id_dieta: 2,
-    id_alimento: 1,
-    cantidad_minima: 50,
-    cantidad_maxima: 100,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 2,
-    id_alimento: 2,
-    cantidad_minima: 100,
-    cantidad_maxima: 200,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 2,
-    id_alimento: 8,
-    cantidad_minima: 100,
-    cantidad_maxima: 180,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 2,
-    id_alimento: 9,
-    cantidad_minima: 80,
-    cantidad_maxima: 200,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 2,
-    id_alimento: 10,
-    cantidad_minima: 0,
-    cantidad_maxima: 100,
-    unidad_medida: "ml",
-  },
+  { id_dieta: 2, id_alimento: 1, cantidad_minima: 50, cantidad_maxima: 100, unidad_medida: "g" },
+  { id_dieta: 2, id_alimento: 2, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "g" },
+  { id_dieta: 2, id_alimento: 8, cantidad_minima: 100, cantidad_maxima: 180, unidad_medida: "g" },
+  { id_dieta: 2, id_alimento: 9, cantidad_minima: 80, cantidad_maxima: 200, unidad_medida: "g" },
+  { id_dieta: 2, id_alimento: 10, cantidad_minima: 0, cantidad_maxima: 100, unidad_medida: "ml" },
 
   // Dieta 3: Nutrición general vegetariana
-  {
-    id_dieta: 3,
-    id_alimento: 1,
-    cantidad_minima: 100,
-    cantidad_maxima: 200,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 3,
-    id_alimento: 3,
-    cantidad_minima: 100,
-    cantidad_maxima: 200,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 3,
-    id_alimento: 4,
-    cantidad_minima: 1,
-    cantidad_maxima: 3,
-    unidad_medida: "unidades",
-  },
-  {
-    id_dieta: 3,
-    id_alimento: 5,
-    cantidad_minima: 1,
-    cantidad_maxima: 2,
-    unidad_medida: "porciones",
-  },
-  {
-    id_dieta: 3,
-    id_alimento: 6,
-    cantidad_minima: 20,
-    cantidad_maxima: 60,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 3,
-    id_alimento: 9,
-    cantidad_minima: 100,
-    cantidad_maxima: 200,
-    unidad_medida: "g",
-  },
-  {
-    id_dieta: 3,
-    id_alimento: 12,
-    cantidad_minima: 10,
-    cantidad_maxima: 30,
-    unidad_medida: "g",
-  },
+  { id_dieta: 3, id_alimento: 1, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "g" },
+  { id_dieta: 3, id_alimento: 3, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "g" },
+  { id_dieta: 3, id_alimento: 4, cantidad_minima: 1, cantidad_maxima: 3, unidad_medida: "unidades" },
+  { id_dieta: 3, id_alimento: 5, cantidad_minima: 1, cantidad_maxima: 2, unidad_medida: "porciones" },
+  { id_dieta: 3, id_alimento: 6, cantidad_minima: 20, cantidad_maxima: 60, unidad_medida: "g" },
+  { id_dieta: 3, id_alimento: 9, cantidad_minima: 100, cantidad_maxima: 200, unidad_medida: "g" },
+  { id_dieta: 3, id_alimento: 12, cantidad_minima: 10, cantidad_maxima: 30, unidad_medida: "g" },
 ];
 
 // ============================================================
 // R12. COBERTURA DE DIETAS POR GRUPOS NUTRICIONALES
-//
-// Esta relación indica qué grupos debe cubrir cada dieta.
-// No almacena cantidades ni restricciones de alimentos.
 // ============================================================
 
 export const coberturaDietaGrupo = [
-  // Dieta 1: Control de peso
   { id_dieta: 1, id_grupo_nutricional: 1 },
   { id_dieta: 1, id_grupo_nutricional: 2 },
   { id_dieta: 1, id_grupo_nutricional: 3 },
   { id_dieta: 1, id_grupo_nutricional: 4 },
-
-  // Dieta 2: Diabetes tipo 2
   { id_dieta: 2, id_grupo_nutricional: 2 },
   { id_dieta: 2, id_grupo_nutricional: 3 },
-
-  // Dieta 3: Nutrición general vegetariana
   { id_dieta: 3, id_grupo_nutricional: 1 },
   { id_dieta: 3, id_grupo_nutricional: 3 },
   { id_dieta: 3, id_grupo_nutricional: 4 },
@@ -907,24 +786,21 @@ export const coberturaDietaGrupo = [
 
 // ============================================================
 // R13. RELACIÓN ALIMENTO–GRUPO NUTRICIONAL
-//
-// Esta relación clasifica los alimentos.
-// No incluye cantidades mínimas ni máximas.
 // ============================================================
 
 export const alimentosGruposNutricionales = [
-  { id_alimento: 1, id_grupo_nutricional: 1 },  // Arroz blanco: Cereales
-  { id_alimento: 2, id_grupo_nutricional: 2 },  // Pollo: Proteínas
-  { id_alimento: 3, id_grupo_nutricional: 3 },  // Ensalada verde: Vegetales
-  { id_alimento: 4, id_grupo_nutricional: 4 },  // Manzana: Frutas
-  { id_alimento: 5, id_grupo_nutricional: 5 },  // Yogur: Lácteos
-  { id_alimento: 6, id_grupo_nutricional: 6 },  // Aguacate: Grasas
-  { id_alimento: 7, id_grupo_nutricional: 1 },  // Pasta integral: Cereales
-  { id_alimento: 8, id_grupo_nutricional: 2 },  // Salmón: Proteínas
-  { id_alimento: 9, id_grupo_nutricional: 3 },  // Brócoli: Vegetales
-  { id_alimento: 10, id_grupo_nutricional: 4 }, // Jugo de naranja: Frutas
-  { id_alimento: 11, id_grupo_nutricional: 5 }, // Queso fresco: Lácteos
-  { id_alimento: 12, id_grupo_nutricional: 6 }, // Almendras: Grasas
+  { id_alimento: 1, id_grupo_nutricional: 1 },
+  { id_alimento: 2, id_grupo_nutricional: 2 },
+  { id_alimento: 3, id_grupo_nutricional: 3 },
+  { id_alimento: 4, id_grupo_nutricional: 4 },
+  { id_alimento: 5, id_grupo_nutricional: 5 },
+  { id_alimento: 6, id_grupo_nutricional: 6 },
+  { id_alimento: 7, id_grupo_nutricional: 1 },
+  { id_alimento: 8, id_grupo_nutricional: 2 },
+  { id_alimento: 9, id_grupo_nutricional: 3 },
+  { id_alimento: 10, id_grupo_nutricional: 4 },
+  { id_alimento: 11, id_grupo_nutricional: 5 },
+  { id_alimento: 12, id_grupo_nutricional: 6 },
 ];
 
 // ============================================================
@@ -932,24 +808,15 @@ export const alimentosGruposNutricionales = [
 // ============================================================
 
 export const contenidoMenuAlimento = [
-  // Desayuno balanceado
   { id_menu: 1, id_alimento: 5, cantidad: 150, unidad_medida: "g" },
   { id_menu: 1, id_alimento: 4, cantidad: 1, unidad_medida: "unidades" },
-
-  // Almuerzo balanceado
   { id_menu: 2, id_alimento: 1, cantidad: 100, unidad_medida: "g" },
   { id_menu: 2, id_alimento: 2, cantidad: 150, unidad_medida: "g" },
   { id_menu: 2, id_alimento: 3, cantidad: 100, unidad_medida: "g" },
-
-  // Cena baja en carbohidratos
   { id_menu: 3, id_alimento: 8, cantidad: 150, unidad_medida: "g" },
   { id_menu: 3, id_alimento: 9, cantidad: 150, unidad_medida: "g" },
-
-  // Merienda baja en carbohidratos rechazada
   { id_menu: 4, id_alimento: 10, cantidad: 250, unidad_medida: "ml" },
   { id_menu: 4, id_alimento: 12, cantidad: 50, unidad_medida: "g" },
-
-  // Almuerzo vegetariano pendiente
   { id_menu: 5, id_alimento: 1, cantidad: 150, unidad_medida: "g" },
   { id_menu: 5, id_alimento: 3, cantidad: 150, unidad_medida: "g" },
   { id_menu: 5, id_alimento: 4, cantidad: 1, unidad_medida: "unidades" },
@@ -957,23 +824,11 @@ export const contenidoMenuAlimento = [
 
 // ============================================================
 // R15. RECETAS DE PLATOS COMPUESTOS
-//
-// Relaciona un alimento compuesto con sus ingredientes.
 // ============================================================
 
 export const recetasPlatosCompuestos = [
-  {
-    id_alimento_compuesto: 3,
-    id_alimento_ingrediente: 9,
-    cantidad: 70,
-    unidad_medida: "g",
-  },
-  {
-    id_alimento_compuesto: 3,
-    id_alimento_ingrediente: 6,
-    cantidad: 30,
-    unidad_medida: "g",
-  },
+  { id_alimento_compuesto: 3, id_alimento_ingrediente: 9, cantidad: 70, unidad_medida: "g" },
+  { id_alimento_compuesto: 3, id_alimento_ingrediente: 6, cantidad: 30, unidad_medida: "g" },
 ];
 
 // ============================================================
@@ -981,34 +836,10 @@ export const recetasPlatosCompuestos = [
 // ============================================================
 
 export const consumos = [
-  {
-    id_consumo: 1,
-    id_asignacion: 1,
-    fecha_consumo: "2026-10-04",
-    estado_consumo: "consumido",
-    observaciones: null,
-  },
-  {
-    id_consumo: 2,
-    id_asignacion: 2,
-    fecha_consumo: "2026-10-04",
-    estado_consumo: "consumido",
-    observaciones: "Se consumió la mayor parte del menú.",
-  },
-  {
-    id_consumo: 3,
-    id_asignacion: 3,
-    fecha_consumo: "2026-10-05",
-    estado_consumo: "parcial",
-    observaciones: "No se consumió toda la porción.",
-  },
-  {
-    id_consumo: 4,
-    id_asignacion: 4,
-    fecha_consumo: "2026-10-06",
-    estado_consumo: "pendiente",
-    observaciones: null,
-  },
+  { id_consumo: 1, id_asignacion: 1, fecha_consumo: "2026-10-04", estado_consumo: "consumido", observaciones: null },
+  { id_consumo: 2, id_asignacion: 2, fecha_consumo: "2026-10-04", estado_consumo: "consumido", observaciones: "Se consumió la mayor parte del menú." },
+  { id_consumo: 3, id_asignacion: 3, fecha_consumo: "2026-10-05", estado_consumo: "parcial", observaciones: "No se consumió toda la porción." },
+  { id_consumo: 4, id_asignacion: 4, fecha_consumo: "2026-10-06", estado_consumo: "pendiente", observaciones: null },
 ];
 
 // ============================================================
@@ -1038,14 +869,11 @@ export const mockData = {
   menus,
   valoraciones,
   menusAsignados,
-
-  // Relaciones independientes
   restriccionesDietaAlimento,
   coberturaDietaGrupo,
   alimentosGruposNutricionales,
   contenidoMenuAlimento,
   recetasPlatosCompuestos,
-
   consumos,
   inscripcionesPacienteDieta,
 };
