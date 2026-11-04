@@ -1,25 +1,22 @@
-
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { obtenerGruposConCantidadAlimentos } from "../../../services/foodService";
+
+import {
+  obtenerGruposConCantidadAlimentos,
+} from "../../../services/nutritionalGroupService";
+
 import { GroupCard } from "../../../components/Head/GroupCard";
 import { Button } from "../../../components/Button";
 import { Card } from "../../../components/Card";
 
 export const NutritionGroups = () => {
   const navigate = useNavigate();
-  const [grupos, setGrupos] = useState([]);
 
-  useEffect(() => {
-    const gruposObtenidos = obtenerGruposConCantidadAlimentos();
-    setGrupos(gruposObtenidos);
-  }, []);
+  const grupos = obtenerGruposConCantidadAlimentos();
 
   const totalAlimentos = grupos.reduce(
     (total, grupo) => total + grupo.cantidadAlimentos,
     0
   );
-
   return (
     <div className="space-y-6">
       {/* Encabezado */}

@@ -1,11 +1,8 @@
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import {
-  obtenerGrupoPorId,
-  obtenerAlimentosDeGrupo,
-} from "../../../services/foodService";
-
+import { obtenerAlimentosDeGrupo } from "../../../services/nutritionalGroupService";
+import { obtenerGrupoPorId } from "../../../services/nutritionalGroupService";
 import { Card } from "../../../components/Card";
 
 export const GroupDetails = () => {

@@ -3,10 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import {
   obtenerAlimentoPorId,
-  obtenerGruposDeAlimento,
   obtenerIngredientesDeAlimento,
 } from "../../services/foodService";
 
+import{obtenerGruposDeAlimento} from "../../services/nutritionalGroupService"
 import { obtenerUsuarioPorId } from "../../services/userService";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";

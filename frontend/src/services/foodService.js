@@ -1,9 +1,7 @@
 
 import {
   alimentos,
-  gruposNutricionales,
-  alimentosGruposNutricionales,
-  recetasPlatosCompuestos
+  recetasPlatosCompuestos,
 } from "../data/mockData";
 
 // Obtener todos los alimentos registrados.
@@ -14,35 +12,9 @@ export const obtenerAlimentos = () => {
 // Obtener un alimento por su identificador.
 export const obtenerAlimentoPorId = (idAlimento) => {
   return alimentos.find(
-    (alimento) => alimento.id_alimento === Number(idAlimento)
+    (alimento) =>
+      alimento.id_alimento === Number(idAlimento)
   );
-};
-
-// Obtener todos los grupos nutricionales disponibles.
-export const obtenerGruposNutricionales = () => {
-  return gruposNutricionales.filter(
-    (grupo) => grupo.estado_grupo === "guardado"
-  );
-};
-
-// Obtener un grupo nutricional por su identificador.
-export const obtenerGrupoPorId = (idGrupo) => {
-  return gruposNutricionales.find(
-    (grupo) =>
-      grupo.id_grupo_nutricional === Number(idGrupo)
-  );
-};
-
-// Obtener los grupos nutricionales relacionados con un alimento.
-export const obtenerGruposDeAlimento = (idAlimento) => {
-  const relaciones = alimentosGruposNutricionales.filter(
-    (relacion) =>
-      relacion.id_alimento === Number(idAlimento)
-  );
-
-  return relaciones
-    .map((relacion) => obtenerGrupoPorId(relacion.id_grupo_nutricional))
-    .filter(Boolean);
 };
 
 // Obtener los ingredientes de un plato compuesto.
@@ -54,9 +26,8 @@ export const obtenerIngredientesDeAlimento = (idAlimento) => {
 
   return relaciones
     .map((receta) => {
-      const ingrediente = alimentos.find(
-        (alimento) =>
-          alimento.id_alimento === receta.id_alimento_ingrediente
+      const ingrediente = obtenerAlimentoPorId(
+        receta.id_alimento_ingrediente
       );
 
       if (!ingrediente) return null;
@@ -67,36 +38,5 @@ export const obtenerIngredientesDeAlimento = (idAlimento) => {
         unidad_medida: receta.unidad_medida,
       };
     })
-    .filter(Boolean);
-};
-
-// Obtener todos los grupos nutricionales con la cantidad de alimentos asociados.
-export const obtenerGruposConCantidadAlimentos = () => {
-  return gruposNutricionales.map((grupo) => {
-    const cantidadAlimentos = alimentosGruposNutricionales.filter(
-      (relacion) =>
-        relacion.id_grupo_nutricional === grupo.id_grupo_nutricional
-    ).length;
-
-    return {
-      ...grupo,
-      cantidadAlimentos,
-    };
-  });
-};
-
-// Obtener los alimentos asociados a un grupo nutricional.
-export const obtenerAlimentosDeGrupo = (idGrupo) => {
-  const relaciones = alimentosGruposNutricionales.filter(
-    (relacion) =>
-      relacion.id_grupo_nutricional === Number(idGrupo)
-  );
-
-  return relaciones
-    .map((relacion) =>
-      alimentos.find(
-        (alimento) => alimento.id_alimento === relacion.id_alimento
-      )
-    )
     .filter(Boolean);
 };

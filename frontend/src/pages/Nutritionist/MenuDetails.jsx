@@ -6,7 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import { validarMenu } from "../../services/menuService";
-import { obtenerDetallesMenu } from "../../facades/menusFacade";
+import { obtenerDetallesMenu } from "../../services/facades/menusFacade";
 
 
 import { Card } from "../../components/Card";

@@ -5,10 +5,7 @@ import { useSearchParams } from "react-router-dom";
 
 
 
-import {
-  obtenerGrupoPorId,
-  obtenerAlimentosDeGrupo,
-} from "../../../services/foodService";
+import { obtenerGrupoPorId,obtenerAlimentosDeGrupo } from "../../../services/nutritionalGroupService";
 
 import { Input } from "../../../components/Input";
 import { Button } from "../../../components/Button";
@@ -17,23 +14,23 @@ import { Card } from "../../../components/Card";
 
 export const GroupForm = () => {
 
-  
+
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
 
-const idGrupo = searchParams.get("id");
-const modoEdicion = idGrupo !== null;
+  const idGrupo = searchParams.get("id");
+  const modoEdicion = idGrupo !== null;
 
-const grupoEditar = modoEdicion
-  ? obtenerGrupoPorId(Number(idGrupo))
-  : null;
+  const grupoEditar = modoEdicion
+    ? obtenerGrupoPorId(Number(idGrupo))
+    : null;
 
-const [formData, setFormData] = useState(() => ({
-  nombre_grupo: grupoEditar?.nombre_grupo ?? "",
-  descripcion: grupoEditar?.descripcion ?? "",
-}));
+  const [formData, setFormData] = useState(() => ({
+    nombre_grupo: grupoEditar?.nombre_grupo ?? "",
+    descripcion: grupoEditar?.descripcion ?? "",
+  }));
 
 
 

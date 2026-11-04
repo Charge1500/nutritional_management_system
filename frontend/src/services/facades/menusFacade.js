@@ -1,15 +1,15 @@
-import { obtenerUsuarioPorId } from "../services/userService";
+import { obtenerUsuarioPorId } from "../userService";
 import {
   obtenerMenuPorId,
   obtenerAlimentosDeMenu
-} from "../services/menuService";
+} from "../menuService";
 import {
   obtenerDietaPorId,
   obtenerGruposDeDieta,
-} from "../services/dietService";
+} from "../dietService";
 import {
   obtenerGruposDeAlimento,
-} from "../services/foodService";
+} from "../nutritionalGroupService";
 
 export const obtenerDetallesMenu = (idMenu) => {
   // 1. Obtener el menú.
