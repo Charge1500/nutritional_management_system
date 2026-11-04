@@ -39,7 +39,6 @@ CREATE TABLE inscripcion_dieta (
 		REFERENCES paciente(id_usuario) ON DELETE CASCADE,
 	id_dieta INTEGER NOT NULL
 		REFERENCES dieta(id_dieta) ON DELETE CASCADE,
-	fecha_inscripcion DATE NOT NULL DEFAULT CURRENT_DATE,
 	PRIMARY KEY (id_paciente, id_dieta)
 );
 
@@ -53,95 +52,48 @@ CREATE TABLE plato_ingrediente (
 	CHECK (id_plato <> id_ingrediente)
 );
 
--- Un alimento puede pertenecer a varios grupos nutricionales.
-CREATE TABLE alimento_grupo (
-	id_alimento INTEGER NOT NULL
-		REFERENCES alimento(id_alimento) ON DELETE CASCADE,
-	id_grupo_nutricional INTEGER NOT NULL
-		REFERENCES grupo_nutricional(id_grupo_nutricional) ON DELETE RESTRICT,
-	PRIMARY KEY (id_alimento, id_grupo_nutricional)
-);
-
--- El jefe valida alimentos.
-CREATE TABLE validacion_alimento (
-	id_validacion SERIAL PRIMARY KEY,
-	id_alimento INTEGER NOT NULL
-		REFERENCES alimento(id_alimento) ON DELETE RESTRICT,
-	id_jefe INTEGER NOT NULL
-		REFERENCES jefe(id_usuario) ON DELETE RESTRICT,
-	fecha_validacion TIMESTAMP NOT NULL DEFAULT NOW(),
-	observaciones TEXT,
-	resultado resultado_validacion NOT NULL
-);
-
 -- Alimentos que contiene cada menú.
 CREATE TABLE menu_alimento (
 	id_menu INTEGER NOT NULL
 		REFERENCES menu(id_menu) ON DELETE CASCADE,
 	id_alimento INTEGER NOT NULL
 		REFERENCES alimento(id_alimento) ON DELETE RESTRICT,
-	cantidad NUMERIC(10, 2) CHECK (cantidad IS NULL OR cantidad > 0),
-	unidad VARCHAR(30),
-	orden INTEGER CHECK (orden IS NULL OR orden > 0),
 	PRIMARY KEY (id_menu, id_alimento)
 );
 
--- El jefe valida menús.
-CREATE TABLE validacion_menu (
-	id_validacion SERIAL PRIMARY KEY,
+-- Parámetro de generación: proporción por tipo de preparación
+-- (atributo multivaluado compuesto proporcion_preparacion {tipo, proporcion}).
+CREATE TABLE proporcion_menu (
 	id_menu INTEGER NOT NULL
-		REFERENCES menu(id_menu) ON DELETE RESTRICT,
-	id_jefe INTEGER NOT NULL
-		REFERENCES jefe(id_usuario) ON DELETE RESTRICT,
-	fecha_validacion TIMESTAMP NOT NULL DEFAULT NOW(),
-	observaciones TEXT,
-	resultado resultado_validacion NOT NULL
+		REFERENCES menu(id_menu) ON DELETE CASCADE,
+	tipo_preparacion tipo_preparacion NOT NULL,
+	proporcion NUMERIC(5, 2) NOT NULL
+		CHECK (proporcion BETWEEN 0 AND 100),
+	PRIMARY KEY (id_menu, tipo_preparacion)
 );
 
--- Menú asignado a un paciente por un nutricionista.
-CREATE TABLE menu_asignado (
-	id_menu_asignado SERIAL PRIMARY KEY,
+-- Cobertura de grupos nutricionales (Abarca).
+CREATE TABLE menu_grupo (
 	id_menu INTEGER NOT NULL
-		REFERENCES menu(id_menu) ON DELETE RESTRICT,
-	id_paciente INTEGER NOT NULL
-		REFERENCES paciente(id_usuario) ON DELETE RESTRICT,
-	id_nutricionista INTEGER NOT NULL
-		REFERENCES nutricionista(id_usuario) ON DELETE RESTRICT,
-	fecha_asignacion TIMESTAMP NOT NULL DEFAULT NOW(),
-	UNIQUE (id_menu, id_paciente)
+		REFERENCES menu(id_menu) ON DELETE CASCADE,
+	id_grupo_nutricional INTEGER NOT NULL
+		REFERENCES grupo_nutricional(id_grupo_nutricional) ON DELETE RESTRICT,
+	PRIMARY KEY (id_menu, id_grupo_nutricional)
 );
 
--- Consumo directo de un alimento realizado por un paciente.
-CREATE TABLE consumo (
-	id_consumo SERIAL PRIMARY KEY,
-	id_paciente INTEGER NOT NULL
-		REFERENCES paciente(id_usuario) ON DELETE RESTRICT,
-	id_alimento INTEGER NOT NULL
-		REFERENCES alimento(id_alimento) ON DELETE RESTRICT,
-	fecha_hora TIMESTAMP NOT NULL DEFAULT NOW(),
-	aceptado BOOLEAN NOT NULL,
-	porcentaje_consumido SMALLINT NOT NULL DEFAULT 100
-		CHECK (porcentaje_consumido BETWEEN 0 AND 100)
-);
 
--- Valoración nutricional de un paciente respecto a una dieta.
-CREATE TABLE valoracion_nutricional (
-	id_valoracion SERIAL PRIMARY KEY,
-	id_paciente INTEGER NOT NULL
-		REFERENCES paciente(id_usuario) ON DELETE RESTRICT,
-	id_nutricionista INTEGER NOT NULL
-		REFERENCES nutricionista(id_usuario) ON DELETE RESTRICT,
-	id_dieta INTEGER NOT NULL
-		REFERENCES dieta(id_dieta) ON DELETE RESTRICT,
-	id_menu INTEGER REFERENCES menu(id_menu) ON DELETE SET NULL,
-	fecha TIMESTAMP NOT NULL DEFAULT NOW(),
-	puntuacion NUMERIC(4, 2) NOT NULL
-		CHECK (puntuacion BETWEEN 0 AND 100),
-	observaciones TEXT,
-	tipo tipo_valoracion NOT NULL DEFAULT 'ordinaria',
-	id_solicitud_reval INTEGER UNIQUE
+-- Origina: vincula la solicitud de revalorización con la valoración.
+CREATE TABLE origina (
+	id_solicitud INTEGER PRIMARY KEY
 		REFERENCES solicitud_revalorizacion(id_solicitud) ON DELETE RESTRICT,
-	CHECK (
-		(tipo = 'revalorizacion') = (id_solicitud_reval IS NOT NULL)
-	)
+	id_valoracion INTEGER NOT NULL UNIQUE
+		REFERENCES valoracion_nutricional(id_valoracion) ON DELETE RESTRICT
 );
+ 
+-- Índices para las consultas informacionales.
+CREATE INDEX idx_menu_dieta ON menu(id_dieta);
+CREATE INDEX idx_menu_asignado_menu ON menu_asignado(id_menu);
+CREATE INDEX idx_consumo_asignacion ON consumo(id_menu_asignado);
+CREATE INDEX idx_consumo_alimento ON consumo(id_alimento);
+CREATE INDEX idx_valoracion_asignacion ON valoracion_nutricional(id_menu_asignado);
+CREATE INDEX idx_alimento_grupo ON alimento(id_grupo_nutricional);
