@@ -1,4 +1,13 @@
-import { dietas, usuarios, menus } from '../data/mockData';
+import {
+  dietas,
+  usuarios,
+  menus,
+  consumos,
+  menusAsignados,
+  contenidoMenuAlimento,
+  alimentos,
+  valoraciones,
+} from '../data/mockData';
 
 const SIMULATED_LATENCY_MS = 250; // retardo artificial para probar el estado "cargando"
 
@@ -83,5 +92,101 @@ export async function getMenusValidatedByReviewer(reviewerId) {
       observations: validation.observations,
       result: validation.result,
     }));
+  return simulateRequest(rows);
+}
+// ============================================================
+// PATRÓN STRATEGY
+// Cada función implementa una estrategia distinta de cálculo
+// para un reporte. El componente del reporte solo llama a la
+// estrategia y muestra el resultado.
+// ============================================================
+
+// Reporte 4: desempeño por nivel calórico.
+// Agrupa los consumos por el nivel calórico predominante del menú,
+// calcula la tasa de aceptación y la puntuación promedio.
+export async function getPerformanceByCaloricLevel() {
+  // 1. Agrupar los consumos por nivel calórico.
+  const byLevel = {};
+
+  consumos.forEach((consumption) => {
+    // Buscamos la asignación del consumo.
+    const assignment = menusAsignados.find(
+      (a) => a.id_asignacion === consumption.id_asignacion
+    );
+    if (!assignment) return;
+
+    // Buscamos el menú de la asignación.
+    const menu = menus.find((m) => m.id_menu === assignment.id_menu);
+    if (!menu) return;
+
+    // Obtenemos los alimentos del menú.
+    const menuFoods = contenidoMenuAlimento
+      .filter((c) => c.id_menu === menu.id_menu)
+      .map((c) => alimentos.find((a) => a.id_alimento === c.id_alimento))
+      .filter(Boolean);
+
+    if (menuFoods.length === 0) return;
+
+    // Determinamos el nivel calórico predominante del menú.
+    const levelCount = { bajo: 0, medio: 0, alto: 0 };
+    menuFoods.forEach((food) => {
+      if (levelCount[food.nivel_calorico] !== undefined) {
+        levelCount[food.nivel_calorico] += 1;
+      }
+    });
+
+    const predominantLevel = Object.entries(levelCount).sort(
+      (a, b) => b[1] - a[1]
+    )[0][0];
+
+    // Inicializamos el nivel si no existe.
+    if (!byLevel[predominantLevel]) {
+      byLevel[predominantLevel] = {
+        level: predominantLevel,
+        totalConsumptions: 0,
+        acceptedConsumptions: 0,
+        scores: [],
+      };
+    }
+
+    // Contamos el consumo.
+    byLevel[predominantLevel].totalConsumptions += 1;
+
+    // Un consumo es aceptado si el estado es "consumido".
+    if (consumption.estado_consumo === 'consumido') {
+      byLevel[predominantLevel].acceptedConsumptions += 1;
+    }
+
+    // Buscamos la puntuación del paciente para ese consumo.
+    const patientScore = valoraciones.find(
+      (v) => v.id_usuario === assignment.id_usuario
+    );
+    if (patientScore && patientScore.puntuacion != null) {
+      byLevel[predominantLevel].scores.push(patientScore.puntuacion);
+    }
+  });
+
+  // 2. Convertimos a array y calculamos métricas.
+  const rows = Object.values(byLevel).map((item) => {
+    const acceptanceRate =
+      item.totalConsumptions > 0
+        ? (item.acceptedConsumptions / item.totalConsumptions) * 100
+        : 0;
+
+    const averageScore =
+      item.scores.length > 0
+        ? item.scores.reduce((sum, s) => sum + s, 0) / item.scores.length
+        : null;
+
+    return {
+      id: item.level,
+      level: item.level,
+      totalConsumptions: item.totalConsumptions,
+      acceptedConsumptions: item.acceptedConsumptions,
+      acceptanceRate: Number(acceptanceRate.toFixed(1)),
+      averageScore: averageScore != null ? Number(averageScore.toFixed(1)) : '—',
+    };
+  });
+
   return simulateRequest(rows);
 }

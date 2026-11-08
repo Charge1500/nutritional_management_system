@@ -24,6 +24,7 @@ import { NutritionistBossHome } from '../pages/Head/NutritionistBossHome';
 import { SolicitarRevalorizacion } from '../pages/Patient/SolicitarRevalorizacion';
 import { MisValoraciones } from '../pages/Patient/MisValoraciones';
 import { MisMenus } from '../pages/Patient/MisMenus';
+import { ReportPerformanceByCaloricLevel } from '../pages/Reports/ReportPerformanceByCaloricLevel';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -93,6 +94,7 @@ export function AppRoutes() {
           <Route path="/reportes" element={<ReportsHome />} />
           <Route path="/reportes/menus-por-dieta" element={<ReportMenusByDiet />} />
           <Route path="/reportes/menus-validados" element={<ReportValidatedMenus />} />
+          <Route path="/reportes/desempeno-calorico" element={<ReportPerformanceByCaloricLevel />} />
         </Route>
 
       </Route>

@@ -12,6 +12,11 @@ const REPORTS = [
     title: 'Reporte 3: Menús validados por revisor',
     description: 'Menús validados por un revisor, con fecha de validación y observaciones.',
   },
+    {
+    path: '/reportes/desempeno-calorico',
+    title: 'Reporte 4: Desempeño por nivel calórico',
+    description: 'Tasa de aceptación y puntuación promedio por nivel calórico.',
+  },
 ];
 
 export function ReportsHome() {
