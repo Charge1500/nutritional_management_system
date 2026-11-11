@@ -43,3 +43,21 @@ def create_group(db: Connection, name: str, description: str | None, state: str)
         db.rollback()
         raise AppError(409, "GRUPO_DUPLICADO", "Ya existe un grupo con ese nombre.")
     return dict(row)
+
+def update_group(db: Connection, group_id: int, name: str, description: str | None, state: str) -> dict | None:
+    sql = """
+    UPDATE grupo_nutricional
+    SET nombre_grupo = :name, descripcion = :description, estado = CAST(:state AS estado_catalogo)
+    WHERE id_grupo_nutricional = :group_id
+    RETURNING id_grupo_nutricional, nombre_grupo, descripcion, estado, fecha_creacion
+    """
+    try:
+        row = db.execute(
+            text(sql),
+            {"group_id": group_id, "name": name.strip(), "description": description, "state": state},
+        ).mappings().first()
+        db.commit()
+    except IntegrityError:  # nombre_grupo es UNIQUE
+        db.rollback()
+        raise AppError(409, "GRUPO_DUPLICADO", "Ya existe un grupo con ese nombre.")
+    return dict(row) if row else None

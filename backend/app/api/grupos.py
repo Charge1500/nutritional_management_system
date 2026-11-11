@@ -34,3 +34,15 @@ def create_group(
     user: dict = Depends(require_role("jefe")),  # solo el jefe
 ):
     return grupo_service.create_group(db, data.nombre_grupo, data.descripcion, data.estado)
+
+@router.put("/{group_id}", response_model=GroupOut)
+def update_group(
+    group_id: int,
+    data: GroupIn,
+    db: Connection = Depends(get_db),
+    user: dict = Depends(require_role("jefe")),  # solo el jefe
+):
+    group = grupo_service.update_group(db, group_id, data.nombre_grupo, data.descripcion, data.estado)
+    if group is None:
+        raise AppError(404, "NO_ENCONTRADO", "El grupo no existe.")
+    return group

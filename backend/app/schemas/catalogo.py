@@ -3,16 +3,16 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-EstadoCatalogo = Literal["borrador", "guardado"]
+CatalogStatus = Literal["borrador", "guardado"]
 
 
-class GrupoIn(BaseModel):
+class GroupIn(BaseModel):
     nombre_grupo: str = Field(min_length=1, max_length=100)
     descripcion: str | None = None
-    estado: EstadoCatalogo = "borrador"
+    estado: CatalogStatus = "borrador"
 
 
-class GrupoOut(BaseModel):
+class GroupOut(BaseModel):
     id_grupo_nutricional: int
     nombre_grupo: str
     descripcion: str | None = None
