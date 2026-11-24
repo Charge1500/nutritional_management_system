@@ -143,11 +143,29 @@ def _get_menu_row(db: Connection, id_menu: int) -> dict | None:
     """Obtiene la fila base de un menú."""
     fila = db.execute(text("""
         SELECT m.id_menu, m.nombre_menu, m.id_dieta, m.id_creador,
-               uc.nombre AS nombre_creador, m.fecha_creacion, m.estado,
-               m.origen, m.id_jefe_indica, m.cantidad_total_alimentos
+               uc.nombre AS nombre_creador, n.especialidad,
+               m.fecha_creacion, m.estado, m.origen,
+               m.id_jefe_indica, m.cantidad_total_alimentos
         FROM menu m
         JOIN usuario uc ON uc.id_usuario = m.id_creador
+        LEFT JOIN nutricionista n ON n.id_usuario = m.id_creador
         WHERE m.id_menu = :id_menu
+    """), {"id_menu": id_menu}).mappings().first()
+    return dict(fila) if fila else None
+
+
+def _get_menu_row_for_update(db: Connection, id_menu: int) -> dict | None:
+    """Bloquea la fila del menú y comprueba su estado sin carreras."""
+    fila = db.execute(text("""
+        SELECT m.id_menu, m.nombre_menu, m.id_dieta, m.id_creador,
+               uc.nombre AS nombre_creador, n.especialidad,
+               m.fecha_creacion, m.estado, m.origen,
+               m.id_jefe_indica, m.cantidad_total_alimentos
+        FROM menu m
+        JOIN usuario uc ON uc.id_usuario = m.id_creador
+        LEFT JOIN nutricionista n ON n.id_usuario = m.id_creador
+        WHERE m.id_menu = :id_menu
+        FOR UPDATE
     """), {"id_menu": id_menu}).mappings().first()
     return dict(fila) if fila else None
 
@@ -191,6 +209,7 @@ def _get_menu_detail(db: Connection, id_menu: int) -> dict:
     menu["creador"] = {
         "id_usuario": menu["id_creador"],
         "nombre": menu.pop("nombre_creador"),
+        "especialidad": menu.pop("especialidad", None),
     }
     menu["proporciones"] = [dict(fila) for fila in proporciones]
     menu["grupos_requeridos"] = [dict(fila) for fila in grupos]
@@ -386,7 +405,7 @@ def update_menu(
     grupos_requeridos: list[int] | None = None,
 ) -> dict:
     """Edita un menú en borrador con su nombre, composición o parámetros."""
-    menu = _get_menu_row(db, id_menu)
+    menu = _get_menu_row_for_update(db, id_menu)
     if menu is None:
         raise AppError(404, "NO_ENCONTRADO", "El menú no existe.")
     if menu["estado"] != "borrador":
@@ -395,7 +414,6 @@ def update_menu(
         raise sin_permiso()
 
     try:
-        db.execute(text("SELECT 1 FROM menu WHERE id_menu = :id_menu FOR UPDATE"), {"id_menu": id_menu})
         if nombre_menu is not None:
             db.execute(text("""
                 UPDATE menu SET nombre_menu = :nombre_menu WHERE id_menu = :id_menu
@@ -435,7 +453,7 @@ def update_menu(
 
 def delete_menu(db: Connection, id_menu: int, user: dict) -> None:
     """Elimina un menú en borrador y su composición."""
-    menu = _get_menu_row(db, id_menu)
+    menu = _get_menu_row_for_update(db, id_menu)
     if menu is None:
         raise AppError(404, "NO_ENCONTRADO", "El menú no existe.")
     if menu["estado"] != "borrador":
@@ -452,8 +470,8 @@ def delete_menu(db: Connection, id_menu: int, user: dict) -> None:
 
 
 def send_menu_to_review(db: Connection, id_menu: int, user: dict) -> dict:
-    """Envía un menú borrador o corregido a revisión."""
-    menu = _get_menu_row(db, id_menu)
+    """Envía un menú borrador a revisión bajo bloqueo de la fila."""
+    menu = _get_menu_row_for_update(db, id_menu)
     if menu is None:
         raise AppError(404, "NO_ENCONTRADO", "El menú no existe.")
     if menu["estado"] not in ("borrador", "rechazado"):
@@ -493,9 +511,11 @@ def list_menus(db: Connection, user: dict, id_dieta: int | None = None, estado: 
 
     filas = db.execute(text(f"""
         SELECT m.id_menu, m.nombre_menu, m.id_dieta, m.id_creador,
-               uc.nombre AS nombre_creador, m.fecha_creacion, m.estado, m.origen
+               uc.nombre AS nombre_creador, n.especialidad,
+               m.fecha_creacion, m.estado, m.origen
         FROM menu m
         JOIN usuario uc ON uc.id_usuario = m.id_creador
+        LEFT JOIN nutricionista n ON n.id_usuario = m.id_creador
         WHERE (:estado IS NULL OR m.estado = CAST(:estado AS estado_menu))
           {where}
         ORDER BY m.fecha_creacion DESC, m.id_menu DESC
@@ -503,7 +523,11 @@ def list_menus(db: Connection, user: dict, id_dieta: int | None = None, estado: 
 
     return [{
         **dict(fila),
-        "creador": {"id_usuario": fila["id_creador"], "nombre": fila["nombre_creador"]},
+        "creador": {
+            "id_usuario": fila["id_creador"],
+            "nombre": fila["nombre_creador"],
+            "especialidad": fila["especialidad"] if "especialidad" in fila.keys() else None,
+        },
     } for fila in filas]
 
 

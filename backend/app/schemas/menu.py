@@ -20,6 +20,7 @@ def _ensure_unique(values: list[int]) -> list[int]:
 class UsuarioResumen(BaseModel):
     id_usuario: int
     nombre: str
+    especialidad: str | None = None
 
 
 class AutomaticMenuIn(BaseModel):
