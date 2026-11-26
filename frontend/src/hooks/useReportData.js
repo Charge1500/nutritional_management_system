@@ -17,10 +17,13 @@ export function useReportData(fetchReport) {
     const requestId = requestIdRef.current;
     setRows([]); // limpia la tabla anterior
     setError(''); // limpia el error anterior
-    if (!param) { // si no hay selección, no se consulta nada
-      setLoading(false);
-      return;
-    }
+
+   const requiresParam = fetchReport.length > 0;
+if (requiresParam && !param) {
+  setLoading(false);
+  return;
+}
+
     setLoading(true);
     try {
       const data = await fetchReport(param); // llamada al servicio

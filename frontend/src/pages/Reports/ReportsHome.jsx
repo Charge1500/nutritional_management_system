@@ -12,6 +12,26 @@ const REPORTS = [
     title: 'Reporte 3: Menús validados por revisor',
     description: 'Menús validados por un revisor, con fecha de validación y observaciones.',
   },
+    {
+    path: '/reportes/desempeno-calorico',
+    title: 'Reporte 4: Desempeño por nivel calórico',
+    description: 'Tasa de aceptación y puntuación promedio por nivel calórico.',
+  },
+    {
+    path: '/reportes/correlacion-calorica',
+    title: 'Reporte 6.1: Correlación calórica por dieta',
+    description: 'Puntuación promedio por nivel calórico y coeficiente de Pearson entre nivel y resultado nutricional, por dieta.',
+  },
+  {
+  path: '/reportes/top-rechazo',
+  title: 'Reporte 6.2: Top 10 alimentos con mayor rechazo',
+  description: 'Alimentos con mayor tasa de rechazo según los consumos de los pacientes, con dieta asociada y nutricionista creador.',
+},
+{
+  path: '/reportes/revalorizacion-vs-sala',
+  title: 'Reporte 6.3: Revalorización vs. promedio de sala',
+  description: 'Compara la tasa de aceptación de pacientes en revalorización con el promedio del resto de su sala.',
+},
 ];
 
 export function ReportsHome() {
