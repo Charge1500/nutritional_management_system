@@ -315,3 +315,164 @@ export async function getCaloricCorrelationByDiet() {
 
   return simulateRequest(rows);
 }
+// ============================================================
+// Reporte 6.2 — Top 10 alimentos con mayor tasa de rechazo
+// ============================================================
+
+// Minimum valid appearances for a food to be eligible for the ranking.
+// Set to 1 so the mock produces results; raise it in production.
+export const MIN_APPEARANCES_TOP_REJECTION = 1;
+
+// Data-sanitizing filters. Boss rejection does NOT affect the rate;
+// these filters only discard inconsistent rows (a rejected menu
+// should never have been assigned).
+const ONLY_APPROVED_MENUS_62 = true;
+const ONLY_ACTIVE_ASSIGNMENTS_62 = true;
+
+// Index consumptions by assignment. If several exist for the same
+// assignment, the most recent one wins (tie-break by id_consumo).
+const consumptionByAssignment = (() => {
+  const map = new Map();
+  for (const c of consumos) {
+    const prev = map.get(c.id_asignacion);
+    if (
+      !prev ||
+      c.fecha_consumo > prev.fecha_consumo ||
+      (c.fecha_consumo === prev.fecha_consumo && c.id_consumo > prev.id_consumo)
+    ) {
+      map.set(c.id_asignacion, c);
+    }
+  }
+  return map;
+})();
+
+// Classify an assignment's outcome from the patient consumption:
+// - accepted: consumido
+// - rejected: parcial, or no consumption record (denominator = assignments)
+// - excluded: pendiente (counts neither in numerator nor denominator)
+const classifyAssignment = (consumption) => {
+  if (!consumption) return 'rejected';
+  switch (consumption.estado_consumo) {
+    case 'consumido': return 'accepted';
+    case 'parcial': return 'rejected';
+    case 'pendiente': return 'excluded';
+    default: return 'excluded';
+  }
+};
+
+const getUserFullName = (id) => {
+  const u = usuarios.find((x) => x.id_usuario === id);
+  return u ? `${u.nombre} ${u.apellidos || ''}`.trim() : `Usuario ${id}`;
+};
+
+const getDietName = (id) => {
+  const d = dietas.find((x) => x.id_dieta === id);
+  return d ? d.nombre_dieta : `Dieta ${id}`;
+};
+
+/**
+ * Report 6.2: Top 10 foods with the highest rejection rate (global).
+ * Rules (confirmed with the team):
+ *  - Rejection is defined ONLY by patient consumption:
+ *      consumido -> accepted
+ *      parcial   -> rejected
+ *      pendiente -> excluded (neither numerator nor denominator)
+ *      no consumption -> rejected (denominator = assigned menus)
+ *  - Each appearance of a food in an assigned menu counts once.
+ *  - Denominator = valid assignments (approved menu + active assignment).
+ *  - Boss rejection does NOT affect the rate.
+ *  - Global top 10. "Associated diet" = the diet where the food had
+ *    the highest rejection rate (tie-break: more rejections, then id_dieta).
+ */
+export async function getTop10FoodsByRejectionRate() {
+  // Global accumulation: id_alimento -> aggregate
+  const globalAgg = new Map();
+  // Per (food, diet) accumulation to pick the associated diet
+  const byFoodDiet = new Map();
+
+  for (const assignment of menusAsignados) {
+    if (ONLY_ACTIVE_ASSIGNMENTS_62 && assignment.estado_asignacion !== 'activo') continue;
+
+    const menu = menus.find((m) => m.id_menu === assignment.id_menu);
+    if (!menu) continue;
+    if (ONLY_APPROVED_MENUS_62 && menu.estado_menu !== 'aprobado') continue;
+
+    const outcome = classifyAssignment(consumptionByAssignment.get(assignment.id_asignacion));
+    if (outcome === 'excluded') continue; // pendiente does not participate
+    const isRejected = outcome === 'rejected';
+
+    const items = contenidoMenuAlimento.filter((c) => c.id_menu === menu.id_menu);
+
+    for (const item of items) {
+      const food = alimentos.find((a) => a.id_alimento === item.id_alimento);
+      if (!food) continue;
+
+      if (!globalAgg.has(food.id_alimento)) {
+        globalAgg.set(food.id_alimento, {
+          id: food.id_alimento,
+          id_alimento: food.id_alimento,
+          nombre_alimento: food.nombre_alimento,
+          nivel_calorico: food.nivel_calorico,
+          nutricionista_creador: getUserFullName(food.id_usuario_creador),
+          appearances: 0,
+          rejections: 0,
+        });
+      }
+      const foodAgg = globalAgg.get(food.id_alimento);
+      foodAgg.appearances += 1;
+      if (isRejected) foodAgg.rejections += 1;
+
+      const dietKey = `${food.id_alimento}::${menu.id_dieta}`;
+      if (!byFoodDiet.has(dietKey)) {
+        byFoodDiet.set(dietKey, {
+          id_alimento: food.id_alimento,
+          id_dieta: menu.id_dieta,
+          appearances: 0,
+          rejections: 0,
+        });
+      }
+      const dietAgg = byFoodDiet.get(dietKey);
+      dietAgg.appearances += 1;
+      if (isRejected) dietAgg.rejections += 1;
+    }
+  }
+
+  const rows = [];
+  for (const foodAgg of globalAgg.values()) {
+    if (foodAgg.appearances < MIN_APPEARANCES_TOP_REJECTION) continue;
+
+    const rejectionRate = Number(
+      ((foodAgg.rejections / foodAgg.appearances) * 100).toFixed(2)
+    );
+
+    let bestDiet = null;
+    for (const dietAgg of byFoodDiet.values()) {
+      if (dietAgg.id_alimento !== foodAgg.id_alimento) continue;
+      const rate = (dietAgg.rejections / dietAgg.appearances) * 100;
+      if (
+        !bestDiet ||
+        rate > bestDiet.rate ||
+        (rate === bestDiet.rate && dietAgg.rejections > bestDiet.rejections) ||
+        (rate === bestDiet.rate &&
+          dietAgg.rejections === bestDiet.rejections &&
+          dietAgg.id_dieta < bestDiet.id_dieta)
+      ) {
+        bestDiet = { ...dietAgg, rate };
+      }
+    }
+
+    rows.push({
+      ...foodAgg,
+      dieta_asociada: bestDiet ? getDietName(bestDiet.id_dieta) : '—',
+      tasa_rechazo: rejectionRate,
+    });
+  }
+
+  rows.sort((a, b) => {
+    if (b.tasa_rechazo !== a.tasa_rechazo) return b.tasa_rechazo - a.tasa_rechazo;
+    if (b.rejections !== a.rejections) return b.rejections - a.rejections;
+    return a.nombre_alimento.localeCompare(b.nombre_alimento, 'es');
+  });
+
+  return simulateRequest(rows.slice(0, 10));
+}

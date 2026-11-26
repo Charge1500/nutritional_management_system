@@ -22,6 +22,11 @@ const REPORTS = [
     title: 'Reporte 6.1: Correlación calórica por dieta',
     description: 'Puntuación promedio por nivel calórico y coeficiente de Pearson entre nivel y resultado nutricional, por dieta.',
   },
+  {
+  path: '/reportes/top-rechazo',
+  title: 'Reporte 6.2: Top 10 alimentos con mayor rechazo',
+  description: 'Alimentos con mayor tasa de rechazo según los consumos de los pacientes, con dieta asociada y nutricionista creador.',
+},
 ];
 
 export function ReportsHome() {
