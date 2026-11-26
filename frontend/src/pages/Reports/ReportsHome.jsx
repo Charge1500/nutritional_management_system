@@ -27,6 +27,11 @@ const REPORTS = [
   title: 'Reporte 6.2: Top 10 alimentos con mayor rechazo',
   description: 'Alimentos con mayor tasa de rechazo según los consumos de los pacientes, con dieta asociada y nutricionista creador.',
 },
+{
+  path: '/reportes/revalorizacion-vs-sala',
+  title: 'Reporte 6.3: Revalorización vs. promedio de sala',
+  description: 'Compara la tasa de aceptación de pacientes en revalorización con el promedio del resto de su sala.',
+},
 ];
 
 export function ReportsHome() {

@@ -1,4 +1,3 @@
-
 /*
  * Datos simulados del sistema de gestión para la generación
  * automática de menús nutricionales.
@@ -61,6 +60,7 @@ export const usuarios = [
     rol: "paciente",
     especialidad: null,
     estado_usuario: "activo",
+    sala: "A",
   },
   {
     id_usuario: 6,
@@ -71,6 +71,7 @@ export const usuarios = [
     rol: "paciente",
     especialidad: null,
     estado_usuario: "activo",
+    sala: "A",
   },
   {
     id_usuario: 7,
@@ -81,6 +82,7 @@ export const usuarios = [
     rol: "paciente",
     especialidad: null,
     estado_usuario: "activo",
+    sala: "B",
   },
 ];
 
@@ -675,6 +677,7 @@ export const valoraciones = [
     puntuacion: 85,   
     altura: 1.65,
     observaciones: "Valoración inicial.",
+    tipo_valoracion: "ordinaria",
   },
   {
     id_valoracion: 2,
@@ -685,6 +688,7 @@ export const valoraciones = [
     puntuacion: 60,   
     altura: 1.75,
     observaciones: "Seguimiento nutricional.",
+    tipo_valoracion: "ordinaria",
   },
   {
     id_valoracion: 3,
@@ -695,6 +699,7 @@ export const valoraciones = [
     puntuacion: 75,   
     altura: 1.62,
     observaciones: "Valoración inicial.",
+    tipo_valoracion: "revalorizacion",
   },
   {
     id_valoracion: 4,
@@ -705,6 +710,7 @@ export const valoraciones = [
     puntuacion: 90,  
     altura: 1.65,
     observaciones: "Valoración de seguimiento.",
+    tipo_valoracion: "ordinaria",
   },
 ];
 

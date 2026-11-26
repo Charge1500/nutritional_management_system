@@ -476,3 +476,119 @@ export async function getTop10FoodsByRejectionRate() {
 
   return simulateRequest(rows.slice(0, 10));
 }
+// ============================================================
+// Reporte 6.3 — Revalorización vs. promedio de sala
+// ============================================================
+
+// Data-sanitizing filters (consistent with 6.2).
+const ONLY_APPROVED_MENUS_63 = true;
+const ONLY_ACTIVE_ASSIGNMENTS_63 = true;
+
+/**
+ * Computes, per room (sala), the average acceptance rate of patients
+ * in revaluation vs. the average of the rest of the room.
+ *
+ * Rules (confirmed with the team):
+ *  - Acceptance rate is computed from consumptions (same as 6.2):
+ *      consumido -> accepted
+ *      parcial   -> rejected
+ *      pendiente -> excluded
+ *      no consumption -> rejected (denominator = assignments)
+ *  - A patient is "in revaluation" if they have at least one
+ *    valoración with tipo_valoracion === "revalorizacion".
+ *  - Patients without any valid assignment are excluded from the
+ *    room averages (no data to compute their rate).
+ *  - Only active assignments of approved menus are considered.
+ *
+ * @returns {Array<{
+ *   id: string,
+ *   sala: string,
+ *   generalAverage: number | null,
+ *   revaluationAverage: number | null,
+ *   difference: number | null,
+ *   patientsCount: number,
+ *   revaluationPatientsCount: number
+ * }>}
+ */
+export async function getRevaluationVsRoomAverage() {
+  // Step 1: collect per-patient acceptance stats (reuse 6.2 logic).
+  // patientId -> { accepted, total }
+  const patientStats = new Map();
+
+  for (const assignment of menusAsignados) {
+    if (ONLY_ACTIVE_ASSIGNMENTS_63 && assignment.estado_asignacion !== 'activo') continue;
+
+    const menu = menus.find((m) => m.id_menu === assignment.id_menu);
+    if (!menu) continue;
+    if (ONLY_APPROVED_MENUS_63 && menu.estado_menu !== 'aprobado') continue;
+
+    const outcome = classifyAssignment(consumptionByAssignment.get(assignment.id_asignacion));
+    if (outcome === 'excluded') continue; // pendiente does not participate
+
+    if (!patientStats.has(assignment.id_usuario)) {
+      patientStats.set(assignment.id_usuario, { accepted: 0, total: 0 });
+    }
+    const stats = patientStats.get(assignment.id_usuario);
+    stats.total += 1;
+    if (outcome === 'accepted') stats.accepted += 1;
+  }
+
+  // Step 2: identify patients in revaluation (any valoración of that type).
+  const revaluationPatients = new Set(
+    valoraciones
+      .filter((v) => v.tipo_valoracion === 'revalorizacion')
+      .map((v) => v.id_usuario)
+  );
+
+  // Step 3: group patients by room.
+  const patientsByRoom = new Map(); // sala -> [patientId]
+  for (const user of usuarios) {
+    if (user.rol !== 'paciente') continue;
+    if (!user.sala) continue; // skip patients without room
+    if (!patientStats.has(user.id_usuario)) continue; // no valid assignments -> exclude
+
+    if (!patientsByRoom.has(user.sala)) patientsByRoom.set(user.sala, []);
+    patientsByRoom.get(user.sala).push(user.id_usuario);
+  }
+
+  // Step 4: compute averages per room.
+  const rows = [];
+  for (const [sala, patientIds] of patientsByRoom.entries()) {
+    const revaluationIds = patientIds.filter((id) => revaluationPatients.has(id));
+    const generalIds = patientIds.filter((id) => !revaluationPatients.has(id));
+
+    const rateOf = (id) => {
+      const { accepted, total } = patientStats.get(id);
+      return total > 0 ? (accepted / total) * 100 : null;
+    };
+
+    const averageOf = (ids) => {
+      const rates = ids.map(rateOf).filter((r) => r != null);
+      if (rates.length === 0) return null;
+      return rates.reduce((sum, r) => sum + r, 0) / rates.length;
+    };
+
+    const generalAverage = averageOf(generalIds);
+    const revaluationAverage = averageOf(revaluationIds);
+
+    const difference =
+      generalAverage != null && revaluationAverage != null
+        ? revaluationAverage - generalAverage
+        : null;
+
+    rows.push({
+      id: sala,
+      sala,
+      generalAverage: generalAverage != null ? Number(generalAverage.toFixed(1)) : null,
+      revaluationAverage: revaluationAverage != null ? Number(revaluationAverage.toFixed(1)) : null,
+      difference: difference != null ? Number(difference.toFixed(1)) : null,
+      patientsCount: patientIds.length,
+      revaluationPatientsCount: revaluationIds.length,
+    });
+  }
+
+  // Sort by room name for stable output.
+  rows.sort((a, b) => a.sala.localeCompare(b.sala, 'es'));
+
+  return simulateRequest(rows);
+}
