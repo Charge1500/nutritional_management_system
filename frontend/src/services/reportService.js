@@ -7,6 +7,7 @@ import {
   contenidoMenuAlimento,
   alimentos,
   valoraciones,
+  inscripcionesPacienteDieta,
 } from '../data/mockData';
 
 const SIMULATED_LATENCY_MS = 250; // retardo artificial para probar el estado "cargando"
@@ -101,45 +102,45 @@ export async function getMenusValidatedByReviewer(reviewerId) {
 // estrategia y muestra el resultado.
 // ============================================================
 
+
+// Devuelve el nivel calórico predominante de un menú (moda de los
+// niveles de sus alimentos). Desempate: bajo > medio > alto, igual
+// que en el Reporte 4. Devuelve null si el menú no tiene alimentos.
+export function getPredominantCaloricLevel(menu) {
+  const menuFoods = contenidoMenuAlimento
+    .filter((c) => c.id_menu === menu.id_menu)
+    .map((c) => alimentos.find((a) => a.id_alimento === c.id_alimento))
+    .filter(Boolean);
+
+  if (menuFoods.length === 0) return null;
+
+  const levelCount = { bajo: 0, medio: 0, alto: 0 };
+  menuFoods.forEach((food) => {
+    if (levelCount[food.nivel_calorico] !== undefined) {
+      levelCount[food.nivel_calorico] += 1;
+    }
+  });
+
+  return Object.entries(levelCount).sort((a, b) => b[1] - a[1])[0][0];
+}
+
 // Reporte 4: desempeño por nivel calórico.
-// Agrupa los consumos por el nivel calórico predominante del menú,
-// calcula la tasa de aceptación y la puntuación promedio.
 export async function getPerformanceByCaloricLevel() {
-  // 1. Agrupar los consumos por nivel calórico.
   const byLevel = {};
 
   consumos.forEach((consumption) => {
-    // Buscamos la asignación del consumo.
     const assignment = menusAsignados.find(
       (a) => a.id_asignacion === consumption.id_asignacion
     );
     if (!assignment) return;
 
-    // Buscamos el menú de la asignación.
     const menu = menus.find((m) => m.id_menu === assignment.id_menu);
     if (!menu) return;
 
-    // Obtenemos los alimentos del menú.
-    const menuFoods = contenidoMenuAlimento
-      .filter((c) => c.id_menu === menu.id_menu)
-      .map((c) => alimentos.find((a) => a.id_alimento === c.id_alimento))
-      .filter(Boolean);
+    // Usa el helper compartido
+    const predominantLevel = getPredominantCaloricLevel(menu);
+    if (!predominantLevel) return;
 
-    if (menuFoods.length === 0) return;
-
-    // Determinamos el nivel calórico predominante del menú.
-    const levelCount = { bajo: 0, medio: 0, alto: 0 };
-    menuFoods.forEach((food) => {
-      if (levelCount[food.nivel_calorico] !== undefined) {
-        levelCount[food.nivel_calorico] += 1;
-      }
-    });
-
-    const predominantLevel = Object.entries(levelCount).sort(
-      (a, b) => b[1] - a[1]
-    )[0][0];
-
-    // Inicializamos el nivel si no existe.
     if (!byLevel[predominantLevel]) {
       byLevel[predominantLevel] = {
         level: predominantLevel,
@@ -149,15 +150,11 @@ export async function getPerformanceByCaloricLevel() {
       };
     }
 
-    // Contamos el consumo.
     byLevel[predominantLevel].totalConsumptions += 1;
-
-    // Un consumo es aceptado si el estado es "consumido".
     if (consumption.estado_consumo === 'consumido') {
       byLevel[predominantLevel].acceptedConsumptions += 1;
     }
 
-    // Buscamos la puntuación del paciente para ese consumo.
     const patientScore = valoraciones.find(
       (v) => v.id_usuario === assignment.id_usuario
     );
@@ -166,13 +163,11 @@ export async function getPerformanceByCaloricLevel() {
     }
   });
 
-  // 2. Convertimos a array y calculamos métricas.
   const rows = Object.values(byLevel).map((item) => {
     const acceptanceRate =
       item.totalConsumptions > 0
         ? (item.acceptedConsumptions / item.totalConsumptions) * 100
         : 0;
-
     const averageScore =
       item.scores.length > 0
         ? item.scores.reduce((sum, s) => sum + s, 0) / item.scores.length
@@ -187,6 +182,136 @@ export async function getPerformanceByCaloricLevel() {
       averageScore: averageScore != null ? Number(averageScore.toFixed(1)) : '—',
     };
   });
+
+  return simulateRequest(rows);
+}
+// ============================================================
+// Reporte 6.1 — Correlación de nivel calórico vs. resultado
+// nutricional por dieta (RF-23 / RI-06)
+// ============================================================
+
+const CALORIC_LEVEL_CODE = { bajo: 1, medio: 2, alto: 3 };
+export const MIN_VALORACIONES_CORRELACION = 2;
+
+const ONLY_APPROVED_MENUS_61 = true;
+const ONLY_ACTIVE_ASSIGNMENTS_61 = true;
+
+function pearsonCorrelation(xs, ys) {
+  const n = xs.length;
+  if (n < 2 || n !== ys.length) return null;
+
+  const meanX = xs.reduce((s, v) => s + v, 0) / n;
+  const meanY = ys.reduce((s, v) => s + v, 0) / n;
+
+  let num = 0;
+  let denX = 0;
+  let denY = 0;
+  for (let i = 0; i < n; i += 1) {
+    const dx = xs[i] - meanX;
+    const dy = ys[i] - meanY;
+    num += dx * dy;
+    denX += dx * dx;
+    denY += dy * dy;
+  }
+
+  if (denX === 0 || denY === 0) return null;
+  return num / Math.sqrt(denX * denY);
+}
+
+export async function getCaloricCorrelationByDiet() {
+  const rows = [];
+
+  for (const dieta of dietas) {
+    const dietId = dieta.id_dieta;
+
+    const enrolledPatientIds = new Set(
+      inscripcionesPacienteDieta
+        .filter((i) => i.id_dieta === dietId)
+        .map((i) => i.id_usuario)
+    );
+
+    const validAssignments = menusAsignados.filter((asg) => {
+      if (ONLY_ACTIVE_ASSIGNMENTS_61 && asg.estado_asignacion !== 'activo') return false;
+      if (!enrolledPatientIds.has(asg.id_usuario)) return false;
+      const menu = menus.find((m) => m.id_menu === asg.id_menu);
+      if (!menu || menu.id_dieta !== dietId) return false;
+      if (ONLY_APPROVED_MENUS_61 && menu.estado_menu !== 'aprobado') return false;
+      return true;
+    });
+
+    const latestAssignmentByPatient = new Map();
+    for (const asg of validAssignments) {
+      const prev = latestAssignmentByPatient.get(asg.id_usuario);
+      if (
+        !prev ||
+        asg.fecha_asignacion > prev.fecha_asignacion ||
+        (asg.fecha_asignacion === prev.fecha_asignacion && asg.id_asignacion > prev.id_asignacion)
+      ) {
+        latestAssignmentByPatient.set(asg.id_usuario, asg);
+      }
+    }
+
+    const pairs = [];
+    const byLevel = {
+      bajo: { sum: 0, count: 0 },
+      medio: { sum: 0, count: 0 },
+      alto: { sum: 0, count: 0 },
+    };
+
+    for (const [patientId, asg] of latestAssignmentByPatient.entries()) {
+      const menu = menus.find((m) => m.id_menu === asg.id_menu);
+      if (!menu) continue;
+      const level = getPredominantCaloricLevel(menu);
+      if (!level || CALORIC_LEVEL_CODE[level] === undefined) continue;
+
+      const patientValuations = valoraciones.filter(
+        (v) => v.id_usuario === patientId && v.puntuacion != null
+      );
+
+      for (const v of patientValuations) {
+        const score = Number(v.puntuacion);
+        pairs.push([CALORIC_LEVEL_CODE[level], score]);
+        byLevel[level].sum += score;
+        byLevel[level].count += 1;
+      }
+    }
+
+    const totalValuations = pairs.length;
+
+    if (totalValuations < MIN_VALORACIONES_CORRELACION) {
+      rows.push({
+        id: String(dietId),
+        dieta: dieta.nombre_dieta,
+        promedioBajo: '—',
+        promedioMedio: '—',
+        promedioAlto: '—',
+        pearson: null,
+        totalValoraciones: totalValuations,
+        insufficient: true,
+      });
+      continue;
+    }
+
+    const avg = (lvl) =>
+      byLevel[lvl].count > 0
+        ? Number((byLevel[lvl].sum / byLevel[lvl].count).toFixed(1))
+        : '—';
+
+    const xs = pairs.map((p) => p[0]);
+    const ys = pairs.map((p) => p[1]);
+    const r = pearsonCorrelation(xs, ys);
+
+    rows.push({
+      id: String(dietId),
+      dieta: dieta.nombre_dieta,
+      promedioBajo: avg('bajo'),
+      promedioMedio: avg('medio'),
+      promedioAlto: avg('alto'),
+      pearson: r != null ? Number(r.toFixed(3)) : null,
+      totalValoraciones: totalValuations,
+      insufficient: false,
+    });
+  }
 
   return simulateRequest(rows);
 }

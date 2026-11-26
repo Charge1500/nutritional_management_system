@@ -17,6 +17,11 @@ const REPORTS = [
     title: 'Reporte 4: Desempeño por nivel calórico',
     description: 'Tasa de aceptación y puntuación promedio por nivel calórico.',
   },
+    {
+    path: '/reportes/correlacion-calorica',
+    title: 'Reporte 6.1: Correlación calórica por dieta',
+    description: 'Puntuación promedio por nivel calórico y coeficiente de Pearson entre nivel y resultado nutricional, por dieta.',
+  },
 ];
 
 export function ReportsHome() {

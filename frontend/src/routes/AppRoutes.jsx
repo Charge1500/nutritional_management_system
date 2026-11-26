@@ -25,6 +25,7 @@ import { SolicitarRevalorizacion } from '../pages/Patient/SolicitarRevalorizacio
 import { MisValoraciones } from '../pages/Patient/MisValoraciones';
 import { MisMenus } from '../pages/Patient/MisMenus';
 import { ReportPerformanceByCaloricLevel } from '../pages/Reports/ReportPerformanceByCaloricLevel';
+import { ReportCaloricCorrelation } from '../pages/Reports/ReportCaloricCorrelation';
 
 // Componente temporal: cada *compañero* lo sustituye por su página real
 const Placeholder = ({ title }) => (
@@ -95,6 +96,7 @@ export function AppRoutes() {
           <Route path="/reportes/menus-por-dieta" element={<ReportMenusByDiet />} />
           <Route path="/reportes/menus-validados" element={<ReportValidatedMenus />} />
           <Route path="/reportes/desempeno-calorico" element={<ReportPerformanceByCaloricLevel />} />
+          <Route path="/reportes/correlacion-calorica" element={<ReportCaloricCorrelation />} />
         </Route>
 
       </Route>
