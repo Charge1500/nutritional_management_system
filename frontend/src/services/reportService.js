@@ -1,4 +1,14 @@
-import { dietas, usuarios, menus } from '../data/mockData';
+import {
+  dietas,
+  usuarios,
+  menus,
+  consumos,
+  menusAsignados,
+  contenidoMenuAlimento,
+  alimentos,
+  valoraciones,
+  inscripcionesPacienteDieta,
+} from '../data/mockData';
 
 const SIMULATED_LATENCY_MS = 250; // retardo artificial para probar el estado "cargando"
 
@@ -83,5 +93,502 @@ export async function getMenusValidatedByReviewer(reviewerId) {
       observations: validation.observations,
       result: validation.result,
     }));
+  return simulateRequest(rows);
+}
+// ============================================================
+// PATRÓN STRATEGY
+// Cada función implementa una estrategia distinta de cálculo
+// para un reporte. El componente del reporte solo llama a la
+// estrategia y muestra el resultado.
+// ============================================================
+
+
+// Devuelve el nivel calórico predominante de un menú (moda de los
+// niveles de sus alimentos). Desempate: bajo > medio > alto, igual
+// que en el Reporte 4. Devuelve null si el menú no tiene alimentos.
+export function getPredominantCaloricLevel(menu) {
+  const menuFoods = contenidoMenuAlimento
+    .filter((c) => c.id_menu === menu.id_menu)
+    .map((c) => alimentos.find((a) => a.id_alimento === c.id_alimento))
+    .filter(Boolean);
+
+  if (menuFoods.length === 0) return null;
+
+  const levelCount = { bajo: 0, medio: 0, alto: 0 };
+  menuFoods.forEach((food) => {
+    if (levelCount[food.nivel_calorico] !== undefined) {
+      levelCount[food.nivel_calorico] += 1;
+    }
+  });
+
+  return Object.entries(levelCount).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+// Reporte 4: desempeño por nivel calórico.
+export async function getPerformanceByCaloricLevel() {
+  const byLevel = {};
+
+  consumos.forEach((consumption) => {
+    const assignment = menusAsignados.find(
+      (a) => a.id_asignacion === consumption.id_asignacion
+    );
+    if (!assignment) return;
+
+    const menu = menus.find((m) => m.id_menu === assignment.id_menu);
+    if (!menu) return;
+
+    // Usa el helper compartido
+    const predominantLevel = getPredominantCaloricLevel(menu);
+    if (!predominantLevel) return;
+
+    if (!byLevel[predominantLevel]) {
+      byLevel[predominantLevel] = {
+        level: predominantLevel,
+        totalConsumptions: 0,
+        acceptedConsumptions: 0,
+        scores: [],
+      };
+    }
+
+    byLevel[predominantLevel].totalConsumptions += 1;
+    if (consumption.estado_consumo === 'consumido') {
+      byLevel[predominantLevel].acceptedConsumptions += 1;
+    }
+
+    const patientScore = valoraciones.find(
+      (v) => v.id_usuario === assignment.id_usuario
+    );
+    if (patientScore && patientScore.puntuacion != null) {
+      byLevel[predominantLevel].scores.push(patientScore.puntuacion);
+    }
+  });
+
+  const rows = Object.values(byLevel).map((item) => {
+    const acceptanceRate =
+      item.totalConsumptions > 0
+        ? (item.acceptedConsumptions / item.totalConsumptions) * 100
+        : 0;
+    const averageScore =
+      item.scores.length > 0
+        ? item.scores.reduce((sum, s) => sum + s, 0) / item.scores.length
+        : null;
+
+    return {
+      id: item.level,
+      level: item.level,
+      totalConsumptions: item.totalConsumptions,
+      acceptedConsumptions: item.acceptedConsumptions,
+      acceptanceRate: Number(acceptanceRate.toFixed(1)),
+      averageScore: averageScore != null ? Number(averageScore.toFixed(1)) : '—',
+    };
+  });
+
+  return simulateRequest(rows);
+}
+// ============================================================
+// Reporte 6.1 — Correlación de nivel calórico vs. resultado
+// nutricional por dieta (RF-23 / RI-06)
+// ============================================================
+
+const CALORIC_LEVEL_CODE = { bajo: 1, medio: 2, alto: 3 };
+export const MIN_VALORACIONES_CORRELACION = 2;
+
+const ONLY_APPROVED_MENUS_61 = true;
+const ONLY_ACTIVE_ASSIGNMENTS_61 = true;
+
+function pearsonCorrelation(xs, ys) {
+  const n = xs.length;
+  if (n < 2 || n !== ys.length) return null;
+
+  const meanX = xs.reduce((s, v) => s + v, 0) / n;
+  const meanY = ys.reduce((s, v) => s + v, 0) / n;
+
+  let num = 0;
+  let denX = 0;
+  let denY = 0;
+  for (let i = 0; i < n; i += 1) {
+    const dx = xs[i] - meanX;
+    const dy = ys[i] - meanY;
+    num += dx * dy;
+    denX += dx * dx;
+    denY += dy * dy;
+  }
+
+  if (denX === 0 || denY === 0) return null;
+  return num / Math.sqrt(denX * denY);
+}
+
+export async function getCaloricCorrelationByDiet() {
+  const rows = [];
+
+  for (const dieta of dietas) {
+    const dietId = dieta.id_dieta;
+
+    const enrolledPatientIds = new Set(
+      inscripcionesPacienteDieta
+        .filter((i) => i.id_dieta === dietId)
+        .map((i) => i.id_usuario)
+    );
+
+    const validAssignments = menusAsignados.filter((asg) => {
+      if (ONLY_ACTIVE_ASSIGNMENTS_61 && asg.estado_asignacion !== 'activo') return false;
+      if (!enrolledPatientIds.has(asg.id_usuario)) return false;
+      const menu = menus.find((m) => m.id_menu === asg.id_menu);
+      if (!menu || menu.id_dieta !== dietId) return false;
+      if (ONLY_APPROVED_MENUS_61 && menu.estado_menu !== 'aprobado') return false;
+      return true;
+    });
+
+    const latestAssignmentByPatient = new Map();
+    for (const asg of validAssignments) {
+      const prev = latestAssignmentByPatient.get(asg.id_usuario);
+      if (
+        !prev ||
+        asg.fecha_asignacion > prev.fecha_asignacion ||
+        (asg.fecha_asignacion === prev.fecha_asignacion && asg.id_asignacion > prev.id_asignacion)
+      ) {
+        latestAssignmentByPatient.set(asg.id_usuario, asg);
+      }
+    }
+
+    const pairs = [];
+    const byLevel = {
+      bajo: { sum: 0, count: 0 },
+      medio: { sum: 0, count: 0 },
+      alto: { sum: 0, count: 0 },
+    };
+
+    for (const [patientId, asg] of latestAssignmentByPatient.entries()) {
+      const menu = menus.find((m) => m.id_menu === asg.id_menu);
+      if (!menu) continue;
+      const level = getPredominantCaloricLevel(menu);
+      if (!level || CALORIC_LEVEL_CODE[level] === undefined) continue;
+
+      const patientValuations = valoraciones.filter(
+        (v) => v.id_usuario === patientId && v.puntuacion != null
+      );
+
+      for (const v of patientValuations) {
+        const score = Number(v.puntuacion);
+        pairs.push([CALORIC_LEVEL_CODE[level], score]);
+        byLevel[level].sum += score;
+        byLevel[level].count += 1;
+      }
+    }
+
+    const totalValuations = pairs.length;
+
+    if (totalValuations < MIN_VALORACIONES_CORRELACION) {
+      rows.push({
+        id: String(dietId),
+        dieta: dieta.nombre_dieta,
+        promedioBajo: '—',
+        promedioMedio: '—',
+        promedioAlto: '—',
+        pearson: null,
+        totalValoraciones: totalValuations,
+        insufficient: true,
+      });
+      continue;
+    }
+
+    const avg = (lvl) =>
+      byLevel[lvl].count > 0
+        ? Number((byLevel[lvl].sum / byLevel[lvl].count).toFixed(1))
+        : '—';
+
+    const xs = pairs.map((p) => p[0]);
+    const ys = pairs.map((p) => p[1]);
+    const r = pearsonCorrelation(xs, ys);
+
+    rows.push({
+      id: String(dietId),
+      dieta: dieta.nombre_dieta,
+      promedioBajo: avg('bajo'),
+      promedioMedio: avg('medio'),
+      promedioAlto: avg('alto'),
+      pearson: r != null ? Number(r.toFixed(3)) : null,
+      totalValoraciones: totalValuations,
+      insufficient: false,
+    });
+  }
+
+  return simulateRequest(rows);
+}
+// ============================================================
+// Reporte 6.2 — Top 10 alimentos con mayor tasa de rechazo
+// ============================================================
+
+// Minimum valid appearances for a food to be eligible for the ranking.
+// Set to 1 so the mock produces results; raise it in production.
+export const MIN_APPEARANCES_TOP_REJECTION = 1;
+
+// Data-sanitizing filters. Boss rejection does NOT affect the rate;
+// these filters only discard inconsistent rows (a rejected menu
+// should never have been assigned).
+const ONLY_APPROVED_MENUS_62 = true;
+const ONLY_ACTIVE_ASSIGNMENTS_62 = true;
+
+// Index consumptions by assignment. If several exist for the same
+// assignment, the most recent one wins (tie-break by id_consumo).
+const consumptionByAssignment = (() => {
+  const map = new Map();
+  for (const c of consumos) {
+    const prev = map.get(c.id_asignacion);
+    if (
+      !prev ||
+      c.fecha_consumo > prev.fecha_consumo ||
+      (c.fecha_consumo === prev.fecha_consumo && c.id_consumo > prev.id_consumo)
+    ) {
+      map.set(c.id_asignacion, c);
+    }
+  }
+  return map;
+})();
+
+// Classify an assignment's outcome from the patient consumption:
+// - accepted: consumido
+// - rejected: parcial, or no consumption record (denominator = assignments)
+// - excluded: pendiente (counts neither in numerator nor denominator)
+const classifyAssignment = (consumption) => {
+  if (!consumption) return 'rejected';
+  switch (consumption.estado_consumo) {
+    case 'consumido': return 'accepted';
+    case 'parcial': return 'rejected';
+    case 'pendiente': return 'excluded';
+    default: return 'excluded';
+  }
+};
+
+const getUserFullName = (id) => {
+  const u = usuarios.find((x) => x.id_usuario === id);
+  return u ? `${u.nombre} ${u.apellidos || ''}`.trim() : `Usuario ${id}`;
+};
+
+const getDietName = (id) => {
+  const d = dietas.find((x) => x.id_dieta === id);
+  return d ? d.nombre_dieta : `Dieta ${id}`;
+};
+
+/**
+ * Report 6.2: Top 10 foods with the highest rejection rate (global).
+ * Rules (confirmed with the team):
+ *  - Rejection is defined ONLY by patient consumption:
+ *      consumido -> accepted
+ *      parcial   -> rejected
+ *      pendiente -> excluded (neither numerator nor denominator)
+ *      no consumption -> rejected (denominator = assigned menus)
+ *  - Each appearance of a food in an assigned menu counts once.
+ *  - Denominator = valid assignments (approved menu + active assignment).
+ *  - Boss rejection does NOT affect the rate.
+ *  - Global top 10. "Associated diet" = the diet where the food had
+ *    the highest rejection rate (tie-break: more rejections, then id_dieta).
+ */
+export async function getTop10FoodsByRejectionRate() {
+  // Global accumulation: id_alimento -> aggregate
+  const globalAgg = new Map();
+  // Per (food, diet) accumulation to pick the associated diet
+  const byFoodDiet = new Map();
+
+  for (const assignment of menusAsignados) {
+    if (ONLY_ACTIVE_ASSIGNMENTS_62 && assignment.estado_asignacion !== 'activo') continue;
+
+    const menu = menus.find((m) => m.id_menu === assignment.id_menu);
+    if (!menu) continue;
+    if (ONLY_APPROVED_MENUS_62 && menu.estado_menu !== 'aprobado') continue;
+
+    const outcome = classifyAssignment(consumptionByAssignment.get(assignment.id_asignacion));
+    if (outcome === 'excluded') continue; // pendiente does not participate
+    const isRejected = outcome === 'rejected';
+
+    const items = contenidoMenuAlimento.filter((c) => c.id_menu === menu.id_menu);
+
+    for (const item of items) {
+      const food = alimentos.find((a) => a.id_alimento === item.id_alimento);
+      if (!food) continue;
+
+      if (!globalAgg.has(food.id_alimento)) {
+        globalAgg.set(food.id_alimento, {
+          id: food.id_alimento,
+          id_alimento: food.id_alimento,
+          nombre_alimento: food.nombre_alimento,
+          nivel_calorico: food.nivel_calorico,
+          nutricionista_creador: getUserFullName(food.id_usuario_creador),
+          appearances: 0,
+          rejections: 0,
+        });
+      }
+      const foodAgg = globalAgg.get(food.id_alimento);
+      foodAgg.appearances += 1;
+      if (isRejected) foodAgg.rejections += 1;
+
+      const dietKey = `${food.id_alimento}::${menu.id_dieta}`;
+      if (!byFoodDiet.has(dietKey)) {
+        byFoodDiet.set(dietKey, {
+          id_alimento: food.id_alimento,
+          id_dieta: menu.id_dieta,
+          appearances: 0,
+          rejections: 0,
+        });
+      }
+      const dietAgg = byFoodDiet.get(dietKey);
+      dietAgg.appearances += 1;
+      if (isRejected) dietAgg.rejections += 1;
+    }
+  }
+
+  const rows = [];
+  for (const foodAgg of globalAgg.values()) {
+    if (foodAgg.appearances < MIN_APPEARANCES_TOP_REJECTION) continue;
+
+    const rejectionRate = Number(
+      ((foodAgg.rejections / foodAgg.appearances) * 100).toFixed(2)
+    );
+
+    let bestDiet = null;
+    for (const dietAgg of byFoodDiet.values()) {
+      if (dietAgg.id_alimento !== foodAgg.id_alimento) continue;
+      const rate = (dietAgg.rejections / dietAgg.appearances) * 100;
+      if (
+        !bestDiet ||
+        rate > bestDiet.rate ||
+        (rate === bestDiet.rate && dietAgg.rejections > bestDiet.rejections) ||
+        (rate === bestDiet.rate &&
+          dietAgg.rejections === bestDiet.rejections &&
+          dietAgg.id_dieta < bestDiet.id_dieta)
+      ) {
+        bestDiet = { ...dietAgg, rate };
+      }
+    }
+
+    rows.push({
+      ...foodAgg,
+      dieta_asociada: bestDiet ? getDietName(bestDiet.id_dieta) : '—',
+      tasa_rechazo: rejectionRate,
+    });
+  }
+
+  rows.sort((a, b) => {
+    if (b.tasa_rechazo !== a.tasa_rechazo) return b.tasa_rechazo - a.tasa_rechazo;
+    if (b.rejections !== a.rejections) return b.rejections - a.rejections;
+    return a.nombre_alimento.localeCompare(b.nombre_alimento, 'es');
+  });
+
+  return simulateRequest(rows.slice(0, 10));
+}
+// ============================================================
+// Reporte 6.3 — Revalorización vs. promedio de sala
+// ============================================================
+
+// Data-sanitizing filters (consistent with 6.2).
+const ONLY_APPROVED_MENUS_63 = true;
+const ONLY_ACTIVE_ASSIGNMENTS_63 = true;
+
+/**
+ * Computes, per room (sala), the average acceptance rate of patients
+ * in revaluation vs. the average of the rest of the room.
+ *
+ * Rules (confirmed with the team):
+ *  - Acceptance rate is computed from consumptions (same as 6.2):
+ *      consumido -> accepted
+ *      parcial   -> rejected
+ *      pendiente -> excluded
+ *      no consumption -> rejected (denominator = assignments)
+ *  - A patient is "in revaluation" if they have at least one
+ *    valoración with tipo_valoracion === "revalorizacion".
+ *  - Patients without any valid assignment are excluded from the
+ *    room averages (no data to compute their rate).
+ *  - Only active assignments of approved menus are considered.
+ *
+ * @returns {Array<{
+ *   id: string,
+ *   sala: string,
+ *   generalAverage: number | null,
+ *   revaluationAverage: number | null,
+ *   difference: number | null,
+ *   patientsCount: number,
+ *   revaluationPatientsCount: number
+ * }>}
+ */
+export async function getRevaluationVsRoomAverage() {
+  // Step 1: collect per-patient acceptance stats (reuse 6.2 logic).
+  // patientId -> { accepted, total }
+  const patientStats = new Map();
+
+  for (const assignment of menusAsignados) {
+    if (ONLY_ACTIVE_ASSIGNMENTS_63 && assignment.estado_asignacion !== 'activo') continue;
+
+    const menu = menus.find((m) => m.id_menu === assignment.id_menu);
+    if (!menu) continue;
+    if (ONLY_APPROVED_MENUS_63 && menu.estado_menu !== 'aprobado') continue;
+
+    const outcome = classifyAssignment(consumptionByAssignment.get(assignment.id_asignacion));
+    if (outcome === 'excluded') continue; // pendiente does not participate
+
+    if (!patientStats.has(assignment.id_usuario)) {
+      patientStats.set(assignment.id_usuario, { accepted: 0, total: 0 });
+    }
+    const stats = patientStats.get(assignment.id_usuario);
+    stats.total += 1;
+    if (outcome === 'accepted') stats.accepted += 1;
+  }
+
+  // Step 2: identify patients in revaluation (any valoración of that type).
+  const revaluationPatients = new Set(
+    valoraciones
+      .filter((v) => v.tipo_valoracion === 'revalorizacion')
+      .map((v) => v.id_usuario)
+  );
+
+  // Step 3: group patients by room.
+  const patientsByRoom = new Map(); // sala -> [patientId]
+  for (const user of usuarios) {
+    if (user.rol !== 'paciente') continue;
+    if (!user.sala) continue; // skip patients without room
+    if (!patientStats.has(user.id_usuario)) continue; // no valid assignments -> exclude
+
+    if (!patientsByRoom.has(user.sala)) patientsByRoom.set(user.sala, []);
+    patientsByRoom.get(user.sala).push(user.id_usuario);
+  }
+
+  // Step 4: compute averages per room.
+  const rows = [];
+  for (const [sala, patientIds] of patientsByRoom.entries()) {
+    const revaluationIds = patientIds.filter((id) => revaluationPatients.has(id));
+    const generalIds = patientIds.filter((id) => !revaluationPatients.has(id));
+
+    const rateOf = (id) => {
+      const { accepted, total } = patientStats.get(id);
+      return total > 0 ? (accepted / total) * 100 : null;
+    };
+
+    const averageOf = (ids) => {
+      const rates = ids.map(rateOf).filter((r) => r != null);
+      if (rates.length === 0) return null;
+      return rates.reduce((sum, r) => sum + r, 0) / rates.length;
+    };
+
+    const generalAverage = averageOf(generalIds);
+    const revaluationAverage = averageOf(revaluationIds);
+
+    const difference =
+      generalAverage != null && revaluationAverage != null
+        ? revaluationAverage - generalAverage
+        : null;
+
+    rows.push({
+      id: sala,
+      sala,
+      generalAverage: generalAverage != null ? Number(generalAverage.toFixed(1)) : null,
+      revaluationAverage: revaluationAverage != null ? Number(revaluationAverage.toFixed(1)) : null,
+      difference: difference != null ? Number(difference.toFixed(1)) : null,
+      patientsCount: patientIds.length,
+      revaluationPatientsCount: revaluationIds.length,
+    });
+  }
+
+  // Sort by room name for stable output.
+  rows.sort((a, b) => a.sala.localeCompare(b.sala, 'es'));
+
   return simulateRequest(rows);
 }

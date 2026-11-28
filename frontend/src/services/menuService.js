@@ -4,6 +4,7 @@ import {
   menus,
   contenidoMenuAlimento,
   alimentos,
+   solicitudes, 
   consumos,
   dietas,
   inscripcionesPacienteDieta,
@@ -238,4 +239,44 @@ export const validarMenu = (
       : null;
 
   return true;
+};
+
+// ============================================================
+// SOLICITUDES (paciente)
+// ============================================================
+
+// Crea una solicitud de revalorización nutricional.
+// Valida que no haya otra solicitud pendiente al mismo nutricionista.
+export const crearSolicitud = (idUsuario, idNutricionista, descripcion) => {
+  // Verificamos que no haya una solicitud pendiente al mismo nutricionista.
+  const solicitudExistente = solicitudes.find(
+    (s) =>
+      s.id_usuario === Number(idUsuario) &&
+      s.estado_solicitud === "pendiente" &&
+      s.tipo_solicitud === "revaloracion" &&
+      s.id_nutricionista === Number(idNutricionista)
+  );
+
+  if (solicitudExistente) {
+    return {
+      solicitud: null,
+      error:
+        "Ya tienes una solicitud pendiente para ese nutricionista. Espera a que sea atendida.",
+    };
+  }
+
+  // Creamos la nueva solicitud.
+  const nuevaSolicitud = {
+    id_solicitud: solicitudes.length + 1,
+    id_usuario: Number(idUsuario),
+    tipo_solicitud: "revaloracion",
+    id_nutricionista: Number(idNutricionista),
+    descripcion,
+    estado_solicitud: "pendiente",
+    fecha_solicitud: new Date().toISOString().split("T")[0],
+    observaciones: null,
+  };
+
+  solicitudes.push(nuevaSolicitud);
+  return { solicitud: nuevaSolicitud, error: null };
 };
