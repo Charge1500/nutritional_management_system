@@ -1,12 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 
-import { obtenerMenus } from "../../services/menuService";
-import { obtenerTodasLasDietas } from "../../services/dietService";
-import { obtenerGruposNutricionales ,
-  obtenerAlimentos
-} from "../../services/foodService";
-
+import { obtenerResumenJefeNutricion } from "../../services/facades/nutritionistBossFecade";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import { Badge } from "../../components/Badge";
@@ -14,23 +9,17 @@ import { Badge } from "../../components/Badge";
 export const NutritionistBossHome = () => {
   const navigate = useNavigate();
 
-  const menus = obtenerMenus();
-  const dietas = obtenerTodasLasDietas();
-  const grupos=obtenerGruposNutricionales();
-  const alimentos=obtenerAlimentos();
+  const {
+  menus,
+  dietas,
+  grupos,
+  alimentos,
+  pendientes,
+  aprobados,
+  rechazados,
+} = obtenerResumenJefeNutricion();
 
-  const pendientes = menus.filter(
-    (menu) => menu.estado_menu === "pendiente"
-  );
-
-  const aprobados = menus.filter(
-    (menu) => menu.estado_menu === "aprobado"
-  );
-
-  const rechazados = menus.filter(
-    (menu) => menu.estado_menu === "rechazado"
-  );
-
+ 
   const estadisticas = [
     {
       titulo: "Total de menús",

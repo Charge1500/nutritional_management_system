@@ -2,11 +2,16 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
-  obtenerGruposNutricionales,
+ 
   obtenerAlimentos,
   obtenerAlimentoPorId,
-  obtenerGruposDeAlimento,
+ 
 } from "../../services/foodService";
+
+import{
+  obtenerGruposNutricionales,
+   obtenerGruposDeAlimento,
+} from "../../services/nutritionalGroupService"
 
 import { Input } from "../../components/Input";
 import { Select } from "../../components/Select";
